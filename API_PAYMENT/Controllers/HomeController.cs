@@ -10,7 +10,7 @@ namespace API_PAYMENT.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "Home Pages Wkwk";
 
             return View();
         }
