@@ -147,7 +147,6 @@ G:/APPLICATION/API_PAYMENT/API_PAYMENT/API_PAYMENT/obj/Debug/API_PAYMENT.pdb
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/bin/Microsoft.AI.WindowsServer.xml
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/bin/Microsoft.AI.Web.xml
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-/Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/obj/Debug/API_PAYMENT.csprojAssemblyReference.cache
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/obj/Debug/API_PAYMENT.csproj.CoreCompileInputs.cache
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/obj/Debug/API_PAYMENT.csproj.CopyComplete
 /Users/harimurti/Projects/APPLICATION_REPOSITORY/API_PAYMENT/api_payment/API_PAYMENT/obj/Debug/API_PAYMENT.dll
