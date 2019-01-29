@@ -59,18 +59,23 @@ namespace API_PAYMENT.Filters
                         response = new CredentialModels("0006");
                     }
 
+                    else if (institutionKey == "")
+                    {
+                        response = new CredentialModels("0007");
+                    }
+
                     else if (dtInst.Rows.Count < 1)
                     {
                         response = new CredentialModels("0008");
                     }
                     else if (!allowedIP)
                     {
-                        response = new CredentialModels("0010");
+                        response = new CredentialModels("0009");
                         //response.responseDescription = IPStr;
                     }
                     else if (String.IsNullOrEmpty(institutionKey))
                     {
-                        response = new CredentialModels("0009");
+                        response = new CredentialModels("0007");
                     }
                     else if (institutionKey != key)
                     {
