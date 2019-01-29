@@ -1,10 +1,12 @@
 ﻿using API_PAYMENT.Models;
+using API_PAYMENT.Filters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Net.Http;
 using System.Web.Mvc;
 
 namespace API_PAYMENT.Controllers
@@ -12,7 +14,8 @@ namespace API_PAYMENT.Controllers
     /// <summary>
     ///  Telkom Controller
     /// </summary>
-    public class TelkomController : Controller
+    [BasicAuthentication]
+    public class TelkomController : ApiController
     {
         /// <summary>
         ///  Telkom Inquriy
@@ -56,7 +59,7 @@ namespace API_PAYMENT.Controllers
 
             if (rc.Equals("0005"))
             {
-                result = telkomHelper.inquiryTelkom(ref request, IP); //accountOnline.inquiryAccountOnline(ref request, IP);
+                result = telkomHelper.InquiryTelkom(ref request, IP); //accountOnline.inquiryAccountOnline(ref request, IP);
             }
             else
             {
@@ -119,7 +122,7 @@ namespace API_PAYMENT.Controllers
 
             if (rc.Equals("0005"))
             {
-                result = accountOnline.doTransferOnline(ref request, IP);
+                result = telkomHelper.PaymentTelkom(ref request, IP);//accountOnline.doTransferOnline(ref request, IP);
             }
             else
             {
