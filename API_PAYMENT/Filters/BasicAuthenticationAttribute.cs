@@ -54,24 +54,22 @@ namespace API_PAYMENT.Filters
                 {
                     CredentialModels response = new CredentialModels();
 
-                    if (institutionCode == "")
+                    if (!allowedIP)
+                    {
+                        response = new CredentialModels("0009");
+                        //response.responseDescription = IPStr;
+                    }
+                    else if(institutionCode == "")
                     {
                         response = new CredentialModels("0006");
                     }
-
                     else if (institutionKey == "")
                     {
                         response = new CredentialModels("0007");
                     }
-
                     else if (dtInst.Rows.Count < 1)
                     {
                         response = new CredentialModels("0008");
-                    }
-                    else if (!allowedIP)
-                    {
-                        response = new CredentialModels("0009");
-                        //response.responseDescription = IPStr;
                     }
                     else if (String.IsNullOrEmpty(institutionKey))
                     {
@@ -79,7 +77,7 @@ namespace API_PAYMENT.Filters
                     }
                     else if (institutionKey != key)
                     {
-                        response = new CredentialModels("0012");
+                        response = new CredentialModels("0008");
                     }
 
                     actionContext.Response =
