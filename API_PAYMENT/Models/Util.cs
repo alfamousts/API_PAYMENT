@@ -178,38 +178,6 @@ namespace API_PAYMENT.Models
             return affectedRow;
         }
 
-        /*
-        public WsDoTransferKliringRequest GetGlobalParamREMITANCE(string typeTrx)
-        {
-            WsUtil util = new WsUtil();
-            WsDoTransferKliringRequest dtKliring = new WsDoTransferKliringRequest();
-            //util.ConnectToApplicationDbase();
-            SqlCommand cmd = new SqlCommand("sp_insert_brivaco");
-            using (SqlConnection DBConn = new SqlConnection(ConfigurationManager.ConnectionStrings["BRI_APIPAYMENTConnectionString"].ConnectionString))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@TypeTrx", typeTrx);
-
-                cmd.Parameters.Add("@Seq", SqlDbType.Int);
-                cmd.Parameters["@Seq"].Direction = ParameterDirection.Output;
-                cmd.Parameters.Add("@Procode", SqlDbType.Int);
-                cmd.Parameters["@Procode"].Direction = ParameterDirection.Output;
-                cmd.Parameters.Add("@Branch", SqlDbType.VarChar, 4);
-                cmd.Parameters["@Branch"].Direction = ParameterDirection.Output;
-
-                DBConn.Open();
-                cmd.ExecuteNonQuery();
-                DBConn.Close();
-
-                dtKliring.seq = cmd.Parameters["@Seq"].Value.ToString();
-                dtKliring.seq = cmd.Parameters["@Procode"].Value.ToString();
-                dtKliring.seq = cmd.Parameters["@Branch"].Value.ToString();
-            }
-
-            return dtKliring;
-        }
-        */
-
         public string ToQueryString(NameValueCollection urlParams)
         {
             StringBuilder sb = new StringBuilder();
