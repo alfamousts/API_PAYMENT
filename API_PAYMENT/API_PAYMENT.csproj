@@ -192,7 +192,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CredentialModels.cs" />
+    <Compile Include="Models\Helper.cs" />
     <Compile Include="Models\ResponseCodeModels.cs" />
+    <Compile Include="Models\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ConstantModels.cs" />
     <Compile Include="Models\TelkomModels.cs" />
