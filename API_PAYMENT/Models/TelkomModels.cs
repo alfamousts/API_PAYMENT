@@ -104,9 +104,9 @@ namespace API_PAYMENT.Models
             [StringLength(100)]
             public string InstitutionKey { get; set; }
             [StringLength(20)]
-            public string TransactionDate { get; set; } //= DateTime.Now.ToString("dd/MM/y");
+            public string TransactionDate { get; set; } 
             [StringLength(20)]
-            public string TransactionTime { get; set; } //= DateTime.Now.ToString("HH:mm:ss");
+            public string TransactionTime { get; set; } 
             [StringLength(20)]
             public string ChannelID { get; set; } = ConstantModels.ChannelID_Telkom;
             [StringLength(20)]
@@ -117,19 +117,19 @@ namespace API_PAYMENT.Models
             public string SequenceTransaction { get; set; }
             [Required]
             [StringLength(20)]
-            public string TotalAmount { get; set; } //= "";
+            public string TotalAmount { get; set; }
             [Required]
             [StringLength(20)]
-            public string FeeAmount { get; set; } //= "0";
+            public string FeeAmount { get; set; }
             [Required]
             [StringLength(20)]
-            public string AddAmount1 { get; set; } //= "0";
+            public string AddAmount1 { get; set; } 
             [Required]
             [StringLength(20)]
-            public string AddAmount2 { get; set; } //= "0";
+            public string AddAmount2 { get; set; } 
             [Required]
             [StringLength(20)]
-            public string AddAmount3 { get; set; } //= "0";
+            public string AddAmount3 { get; set; } 
             [Required]
             [StringLength(100)]
             public string BillingNumber { get; set; } //InputData

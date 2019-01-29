@@ -29,7 +29,7 @@ namespace API_PAYMENT.Models
         public const string FORMATTIME = "HHmmss";
 
         //Hanum, start API_PAYMENT Telkom
-        public const string URLINQPAY_TELKOM = "http://10.107.11.108/poscgi/pswcgi/method=post&data=json";
+        public const string URLINQPAY_TELKOM = "http://10.107.11.108/poscgi/pswcgi/method=post&data=json/";
 
         public const string ChannelID_Telkom = "IBBISNIS";
         public const string ProductID_Telkom = "TELKOM";

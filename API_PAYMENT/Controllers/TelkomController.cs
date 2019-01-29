@@ -21,7 +21,7 @@ namespace API_PAYMENT.Controllers
         ///  Telkom Inquriy
         /// </summary>
         
-        //GET: api/Telkom/5
+        //GET: api/Telkom
         public TelkomModels.TelkomInquiryResponse Get(string billingNumber, string beneficiaryAccount)
         {
             TelkomModels.TelkomInquiryResponse result = new TelkomModels.TelkomInquiryResponse();
