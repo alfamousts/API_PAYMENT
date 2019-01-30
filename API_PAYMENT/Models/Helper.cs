@@ -51,6 +51,28 @@ namespace API_PAYMENT.Models
             return dt;
         }
 
+        public Boolean featureCek(string kodeInst, string featureCode)
+        {
+            Boolean result;
+            Util util = new Util();
+            //util.ConnectToApplicationDbase();
+
+            string sql;
+
+            sql = "SELECT * FROM FEATUREMAP with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "' AND FEATURE_CODE = '"+ featureCode +"'";
+            DataTable dt = util.setDataTable(sql);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                result = true;
+                return result;
+            }
+            else
+            {
+                result = false;
+                return result;
+            }
+        }
+
         public void logging(string instFolder, string filename, string data)
         {
             try

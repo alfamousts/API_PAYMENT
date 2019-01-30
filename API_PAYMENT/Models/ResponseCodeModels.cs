@@ -29,6 +29,8 @@ namespace API_PAYMENT.Models
                     return "Invalid username (institution code) or password (institution key)";
                 case "0009":
                     return "IP address not allowed";
+                case "0011":
+                    return "Feature not allowed";
 
                 case "81":
                     return "Throw an exception";
