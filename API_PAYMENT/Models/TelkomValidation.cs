@@ -15,7 +15,7 @@ namespace API_PAYMENT.Models
             decimal number;
             string rc = "";
 
-            if (helper.CheckFeature(AutoInqRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
+            if (helper.FeatureCheck(AutoInqRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
             {
                 if (String.IsNullOrEmpty(AutoInqRequest.BillingNumber))
                 {
@@ -48,7 +48,7 @@ namespace API_PAYMENT.Models
             decimal number;
             string rc = "";
 
-            if (helper.CheckFeature(PayRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
+            if (helper.FeatureCheck(PayRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
             {
                 if (!ceknoref)
                 {
