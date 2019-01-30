@@ -73,7 +73,7 @@ namespace API_PAYMENT.Models
                 }
                 else if (String.IsNullOrEmpty(PayRequest.ReferralNumber))
                 {
-                    rc = "0010"; //Referral number tidak boleh kosong
+                    rc = "0014"; //Referral number tidak boleh kosong
                 }
                 else if (!decimal.TryParse(PayRequest.TotalAmount.Replace(",", ""), out number))
                 {
@@ -98,7 +98,7 @@ namespace API_PAYMENT.Models
             }
             else
             {
-                rc = "0011"; //Nomor referral sudah pernah digunakan
+                rc = "0013"; //Nomor referral sudah pernah digunakan
             }
 
             return rc;
