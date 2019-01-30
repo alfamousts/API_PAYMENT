@@ -16,17 +16,13 @@ namespace API_PAYMENT.Models
 
             if (String.IsNullOrEmpty(AutoInqRequest.BillingNumber))
             {
-                rc = "0201";
+                rc = "0210";
             }
             else if (String.IsNullOrEmpty(AutoInqRequest.SourceAccount))
             {
-                rc = "0202";
+                rc = "0211";
             }
             else if (!decimal.TryParse(AutoInqRequest.BillingNumber, out number))
-            {
-                rc = "0203";
-            }
-            else if (!decimal.TryParse(AutoInqRequest.SourceAccount, out number))
             {
                 rc = "0204";
             }
@@ -64,7 +60,7 @@ namespace API_PAYMENT.Models
                 }
                 else if (String.IsNullOrEmpty(PayRequest.BillingCode))
                 {
-                    rc = "0207";
+                    rc = "0207"; //Billing code tidak boleh kosong
                 }
                 else if (String.IsNullOrEmpty(PayRequest.ReferralNumber))
                 {
@@ -77,10 +73,6 @@ namespace API_PAYMENT.Models
                 else if (System.Convert.ToDouble(PayRequest.TotalAmount.Replace(",", "")) < 1)
                 {
                     rc = "0209"; //Total amount tidak boleh 0 atau bernilai negatif
-                }
-                else if (!decimal.TryParse(PayRequest.SourceAccount.Replace(",", ""), out number))
-                {
-                    rc = "0204"; //Source account mengandung karakter bukan angka
                 }
                 else if (!decimal.TryParse(PayRequest.ReferralNumber, out number))
                 {

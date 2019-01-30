@@ -52,10 +52,8 @@ namespace API_PAYMENT.Models
                     return "Payment timeout";
 
                 //Hanum, start response code TELKOM
-                case "0203":
-                    return "Billing number must be a number";
                 case "0204":
-                    return "Source account must be a number";
+                    return "Billing number must be a number";
                 case "0205":
                     return "Total amount must not be empty";
                 case "0206":
