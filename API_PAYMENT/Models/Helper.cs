@@ -73,6 +73,27 @@ namespace API_PAYMENT.Models
             }
         }
 
+        public Boolean CheckFeature(string institutionCode, string featureCode)
+        {
+            Boolean result;
+            Util util = new Util();
+            string sql;
+
+            sql = "SELECT * FROM TELKOMTRANSACTION WITH (NOLOCK) WHERE INSTITUION_CODE='" + institutionCode + "' AND FEATURE_CODE='" + featureCode + "'";
+            DataTable dt = util.setDataTable(sql);
+
+            if (dt.Rows.Count > 0)
+            {
+                result = true;
+                return result;
+            }
+            else
+            {
+                result = false;
+                return result;
+            }
+        }
+
         public void logging(string instFolder, string filename, string data)
         {
             try
