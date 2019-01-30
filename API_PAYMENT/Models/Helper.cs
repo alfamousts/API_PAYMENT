@@ -79,7 +79,7 @@ namespace API_PAYMENT.Models
             Util util = new Util();
             string sql;
 
-            sql = "SELECT * FROM TELKOMTRANSACTION WITH (NOLOCK) WHERE INSTITUION_CODE='" + institutionCode + "' AND FEATURE_CODE='" + featureCode + "'";
+            sql = "SELECT * FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUION_CODE='" + institutionCode + "' AND FEATURE_CODE='" + featureCode + "'";
             DataTable dt = util.setDataTable(sql);
 
             if (dt.Rows.Count > 0)
