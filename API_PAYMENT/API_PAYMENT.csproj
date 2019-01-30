@@ -196,6 +196,7 @@
     <Compile Include="Models\Helper.cs" />
     <Compile Include="Models\ResponseCodeModels.cs" />
     <Compile Include="Models\TelkomModels.cs" />
+    <Compile Include="Models\TelkomValidation.cs" />
     <Compile Include="Models\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ConstantModels.cs" />
