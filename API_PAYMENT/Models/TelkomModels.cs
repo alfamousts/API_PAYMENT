@@ -250,6 +250,7 @@ namespace API_PAYMENT.Models
             {
                 errorMsg = ((PayResponse.errorDescription == null ? 0 : PayResponse.errorDescription.Length) > 250 ? PayResponse.errorDescription.Substring(0, 250) : PayResponse.errorDescription) + " (" + rc_psw + ")";
             }
+
             sql = "";
             //sql = "INSERT INTO TRANSAKSI_ONLINE ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[BANK_CODE],[INSTITUTION_CODE],[AMOUNT_TRANSAKSI]," +
             //      "[NO_REK_DB],[NO_REK_CR],[NAMA],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC],[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF]) " +

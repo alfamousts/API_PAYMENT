@@ -64,7 +64,6 @@ namespace API_PAYMENT.Models
                     return "Total amount must not be a negative number";
                 //Hanum, end response code TELKOM
 
-
                 default:
                     return "";
             }

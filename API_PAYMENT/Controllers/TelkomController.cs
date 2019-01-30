@@ -121,7 +121,7 @@ namespace API_PAYMENT.Controllers
 
             if (rc.Equals("0005"))
             {
-                result = telkomHelper.PaymentTelkom(ref request, IP);//accountOnline.doTransferOnline(ref request, IP);
+                result = telkomHelper.PaymentTelkom(ref request, IP);
             }
             else
             {

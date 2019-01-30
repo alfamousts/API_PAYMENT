@@ -38,7 +38,6 @@ namespace API_PAYMENT.Models
         public const string SubProductPAY_Telkom = "401000";
 
         public const string FeatureCode_Telkom = "00002";
-
         //Hanum, end API_PAYMENT Telkom
     }
 }
