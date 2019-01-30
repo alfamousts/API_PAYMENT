@@ -16,9 +16,9 @@ namespace API_PAYMENT.Models
         //FIKRI, start API_PAYMENT CCBRI
         public const string URLINQPAY = "http://10.107.11.108/poscgi/pswcgi/method=post&data=json";
 
-        public const string ChannelID_CCBRI = "IBBISNIS";
+        public const string ChannelID_CCBRI = "APIBILL";
         public const string ProductID_CCBRI = "CCBRI";
-        public const string Key_CCBRI = "IBBIZ000000000000001";
+        public const string Key_CCBRI = "APIBILL1234567890";
         public const string SubProductINQ = "301000";
         public const string SubProductPAY = "401000";
 
@@ -48,6 +48,7 @@ namespace API_PAYMENT.Models
         public const string SubProductPAY_Telkom = "401000";
 
         public const string FeatureCode_Telkom = "00002";
+        public const string FeatureCode_CC = "00001";
         //Hanum, end API_PAYMENT Telkom
     }
 }
