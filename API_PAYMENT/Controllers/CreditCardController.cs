@@ -14,11 +14,52 @@ namespace API_PAYMENT.Controllers
     public class CreditCardController : ApiController
     {
         // GET: api/CreditCard
-     
+
 
         // POST: api/CreditCard
-        public void Post([FromBody]string value)
+        public IHttpActionResult Post([FromBody]CreditCardModels.CreditCardPaymentRequest request)
         {
+            if (request == null)
+            {
+                return BadRequest();
+            }
+            CreditCardModels.CreditCardPaymentRespone response = new CreditCardModels.CreditCardPaymentRespone();
+
+            var context = new ValidationContext(Request, serviceProvider: null, items: null);
+            var validationResults = new List<ValidationResult>();
+            var authHeader = Request.Headers.Authorization;
+            string featureCode = "";
+
+            request.instiutionCode = InstitutionCredentials.InstitutionCode(authHeader);
+            request.instiutionKey = InstitutionCredentials.InstitutionKey(authHeader);
+
+            var isValid = Validator.TryValidateObject(Request, context, validationResults);
+            if (!isValid)
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    response.responseCode = "01";
+                    response.responseDescription += validationResult.ErrorMessage;
+                }
+                return Ok(response);
+            }
+
+            featureCode = "00001";
+
+            string rc = CreditCardHelper.ValidateInputPaymentCreditCard(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
+
+            if (rc.Equals("0005"))
+            {
+                response = CreditCardHelper.PaymentCC(ref request, featureCode); //accountOnline.inquiryAccountOnline(ref request, IP);
+            }
+            else
+            {
+                response.responseCode = rc;
+                response.responseDescription = "Inquiry failed";
+                response.errorDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
+            }
+
+            return Ok(response);
         }
 
         // PUT: api/CreditCard/5
@@ -65,12 +106,12 @@ namespace API_PAYMENT.Controllers
             }
 
             featureCode = "00001";
-            
+
             string rc = CreditCardHelper.ValidateInputInquiryCreditCard(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
 
             if (rc.Equals("0005"))
             {
-                response = CreditCardHelper.InquiryCCBRI(ref request); //accountOnline.inquiryAccountOnline(ref request, IP);
+                response = CreditCardHelper.InquiryCC(ref request, featureCode); //accountOnline.inquiryAccountOnline(ref request, IP);
             }
             else
             {
@@ -78,7 +119,7 @@ namespace API_PAYMENT.Controllers
                 response.responseDescription = "Inquiry failed";
                 response.errorDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
             }
-            
+
             return Ok(response);
         }
     }
