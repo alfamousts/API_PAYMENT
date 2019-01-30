@@ -153,8 +153,8 @@ namespace API_PAYMENT.Models
             request.ContentLength = postBytes.Length;
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            WebProxy proxy = new WebProxy("172.18.104.20", 1707);
-            request.Proxy = proxy;
+            //WebProxy proxy = new WebProxy("172.18.104.20", 1707);
+            //request.Proxy = proxy;
 
             // add post data to request
             Stream postStream = request.GetRequestStream();
