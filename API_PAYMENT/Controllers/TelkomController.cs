@@ -22,11 +22,12 @@ namespace API_PAYMENT.Controllers
         /// </summary>
         
         //GET: api/Telkom
-        public TelkomModels.TelkomInquiryResponse Get(string billingNumber, string beneficiaryAccount)
+        public TelkomModels.TelkomInquiryResponse Get(string billingNumber)
         {
             TelkomModels.TelkomInquiryResponse result = new TelkomModels.TelkomInquiryResponse();
             TelkomModels.TelkomInquiryRequest request = new TelkomModels.TelkomInquiryRequest();
             TelkomHelper telkomHelper = new TelkomHelper();
+            TelkomValidation telkomValidation = new TelkomValidation();
             //WsAccountOnline accountOnline = new WsAccountOnline();
 
             var context = new ValidationContext(Request, serviceProvider: null, items: null);
@@ -35,12 +36,12 @@ namespace API_PAYMENT.Controllers
             var authHeader = Request.Headers.Authorization;
 
             billingNumber = (billingNumber is null ? "" : billingNumber);
-            beneficiaryAccount = (beneficiaryAccount is null ? "" : beneficiaryAccount);
+            //beneficiaryAccount = (beneficiaryAccount is null ? "" : beneficiaryAccount);
 
             request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
             request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
             request.BillingNumber = billingNumber;
-            request.BeneficiaryAccount = beneficiaryAccount;
+            request.SourceAccount = telkomHelper.GetSourceAccountTelkom(request.InstitutionCode, ConstantModels.FeatureCode_Telkom);
 
             string IP = InstitutionCredentials.IP();
 
@@ -55,7 +56,7 @@ namespace API_PAYMENT.Controllers
                 return result;
             }
 
-            string rc = "0005";//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
+            string rc = telkomValidation.ValidateInputInquiryTelkom(ref request, IP);
 
             if (rc.Equals("0005"))
             {
@@ -84,12 +85,11 @@ namespace API_PAYMENT.Controllers
             }
 
             TelkomModels.TelkomPaymentResponse result = new TelkomModels.TelkomPaymentResponse();
-            //WsAccountOnline accountOnline = new WsAccountOnline();
             TelkomHelper telkomHelper = new TelkomHelper();
+            TelkomValidation telkomValidation = new TelkomValidation();
 
             string IP = InstitutionCredentials.IP();
-            decimal number;
-
+            
             var context = new ValidationContext(Request, serviceProvider: null, items: null);
             var validationResults = new List<ValidationResult>();
             var authHeader = Request.Headers.Authorization;
@@ -97,13 +97,12 @@ namespace API_PAYMENT.Controllers
             request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
             request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
             request.TotalAmount = (request.TotalAmount is null ? "" : request.TotalAmount);
-            request.FeeAmount = (request.FeeAmount is null ? "" : request.FeeAmount);
-            request.AddAmount1 = (request.AddAmount1 is null ? "" : request.AddAmount1);
-            request.AddAmount2 = (request.AddAmount2 is null ? "" : request.AddAmount2);
-            request.AddAmount3 = (request.AddAmount3 is null ? "" : request.AddAmount3);
-            request.BeneficiaryAccount = (request.BeneficiaryAccount is null ? "0".PadLeft(15, '0') : request.BeneficiaryAccount.PadLeft(15, '0'));
-            request.BeneficiaryName = (request.BeneficiaryName is null ? "" : request.BeneficiaryName);
-            request.Remark = (request.Remark is null ? "" : request.Remark);
+            request.FirstBill = (request.FirstBill is null ? "" : request.FirstBill);
+            request.SecondBill = (request.SecondBill is null ? "" : request.SecondBill);
+            request.ThirdBill = (request.ThirdBill is null ? "" : request.ThirdBill);
+            request.SourceAccount = (request.SourceAccount is null ? "0".PadLeft(15, '0') : request.SourceAccount.PadLeft(15, '0'));
+            request.Name = (request.Name is null ? "" : request.Name);
+            request.BillingCode = (request.BillingCode is null ? "" : request.BillingCode);
             request.ReferralNumber = (request.ReferralNumber is null ? "" : request.ReferralNumber);
             
             var isValid = Validator.TryValidateObject(Request, context, validationResults);
@@ -114,20 +113,20 @@ namespace API_PAYMENT.Controllers
                     result.responseCode = "01";
                     result.responseDescription += validationResult.ErrorMessage;
                 }
-                //return result;
+                
                 return BadRequest();
             }
 
-            string rc = "0005";// telkomHelper.ValidatePaymentTelkom(ref request, IP);
+            string rc = telkomValidation.ValidatePaymentTelkom(ref request, IP);
 
             if (rc.Equals("0005"))
             {
-                result = telkomHelper.PaymentTelkom(ref request, IP);//accountOnline.doTransferOnline(ref request, IP);
+                result = telkomHelper.PaymentTelkom(ref request, IP);
             }
             else
             {
                 result.responseCode = rc;
-                result.responseDescription = "Do transfer online gagal";
+                result.responseDescription = "Payment gagal";
                 result.errorDescription = ResponseCodeModels.GetResponseDescription(result.responseCode);
             }
 
