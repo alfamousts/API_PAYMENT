@@ -90,7 +90,7 @@ namespace API_PAYMENT.Models
                     }
                     else
                     {
-                        rc = "0005"; //Success
+                        rc = "0005"; //Validasi success
                     }
                 }
                 else
