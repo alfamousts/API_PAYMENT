@@ -113,7 +113,7 @@ namespace API_PAYMENT.Controllers
                     result.responseCode = "01";
                     result.responseDescription += validationResult.ErrorMessage;
                 }
-                //return result;
+                
                 return BadRequest();
             }
 
