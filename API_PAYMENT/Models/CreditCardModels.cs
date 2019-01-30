@@ -61,7 +61,7 @@ namespace API_PAYMENT.Models
         }
         
 
-        public class PSWServiceResponse
+        public class PSWServiceInqResponse
         {
             public string RC;
             public string Description;
@@ -69,10 +69,17 @@ namespace API_PAYMENT.Models
             public string Data2;
         }
 
+        public class PSWServicePayResponse
+        {
+            public string RC;
+            public string Description;
+            public string JurnalSeq;
+        }
+
         public class inqData
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string name { get; set; }
+            public string cardName { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string billingAmount { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -84,13 +91,11 @@ namespace API_PAYMENT.Models
         public class payData
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string name { get; set; }
+            public string cardNumber { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string billingAmount { get; set; }
+            public string reference { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string minimumPayment { get; set; }
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string maturityDate { get; set; }
+            public string journalSeq { get; set; }
         }
 
         public class CreditCardInquiryRequest
@@ -110,8 +115,6 @@ namespace API_PAYMENT.Models
             public string responseCode { get; set; }
             public string responseDescription { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string errorDescription { get; set; }
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public inqData data { get; set; } = new inqData();
         }
 
@@ -119,8 +122,6 @@ namespace API_PAYMENT.Models
         {
             [Required]
             public string cardNumber { get; set; }
-            [Required]
-            public string issuerBank { get; set; }
             [Required]
             public string cardName { get; set; }
             [Required]
@@ -138,8 +139,6 @@ namespace API_PAYMENT.Models
             public string responseCode { get; set; }
             public string responseDescription { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string errorDescription { get; set; }
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public payData data { get; set; } = new payData();
         }
         //add Credit Card models request and response here
@@ -154,38 +153,13 @@ namespace API_PAYMENT.Models
         {
         }
 
-        public static string ValidateInputInquiryCreditCard(ref CreditCardModels.CreditCardInquiryRequest requestInq, string featureCode)
-        {
-            Helper helper = new Helper();
-            if (!helper.featureCek(requestInq.instiutionCode, featureCode))
-            {
-                return "0011";
-            }
-            else
-            {
-                return "0005";
-            }
-        }
-
-        public static string ValidateInputPaymentCreditCard(ref CreditCardModels.CreditCardPaymentRequest requestPay, string featureCode)
-        {
-            Helper helper = new Helper();
-            if (!helper.featureCek(requestPay.instiutionCode, featureCode))
-            {
-                return "0011";
-            }
-            else
-            {
-                return "0005";
-            }
-        }
 
         public static CreditCardModels.CreditCardInquiryRespone InquiryCC(ref CreditCardModels.CreditCardInquiryRequest requestInq, string featureCode)
         {
             string url = ConstantModels.URLINQPAY;
             CreditCardModels.PSWRequest pswReq = new CreditCardModels.PSWRequest();
             CreditCardModels.CreditCardInquiryRespone responseInq = new CreditCardModels.CreditCardInquiryRespone();
-            CreditCardModels.PSWServiceResponse respond = new CreditCardModels.PSWServiceResponse();
+            CreditCardModels.PSWServiceInqResponse pswRes = new CreditCardModels.PSWServiceInqResponse();
 
             string bankCode = GetBinMap(requestInq.cardNumber.Substring(0, 6));
 
@@ -261,40 +235,42 @@ namespace API_PAYMENT.Models
                     Stream answerStream = response.GetResponseStream();
                     StreamReader answerReader = new StreamReader(answerStream);
                     String jsonAnswer = answerReader.ReadToEnd();
-                    respond = JsonConvert.DeserializeObject<CreditCardModels.PSWServiceResponse>(jsonAnswer);
-                    responseInq.responseCode = respond.RC;
-                    responseInq.responseDescription = respond.Description;
-                    if (respond.RC == "00")
+                    pswRes = JsonConvert.DeserializeObject<CreditCardModels.PSWServiceInqResponse>(jsonAnswer);
+                    responseInq.responseCode = pswRes.RC;
+                    responseInq.responseDescription = pswRes.Description;
+                    if (pswRes.RC == "00")
                     {
                         responseInq.responseCode = "0100";
-                        responseInq.responseDescription = "Inquiry Success";
+                        responseInq.responseDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
                         //responseInq.errorDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
 
-                        string pswresData = respond.Data1.Replace("||", "~");
+                        string pswresData = pswRes.Data1.Replace("||", "~");
                         string[] data = pswresData.Split('~');
-                        responseInq.data.name = data[0];
+                        responseInq.data.cardName = data[0];
                         responseInq.data.billingAmount = data[1];
                         responseInq.data.minimumPayment = data[2];
                         responseInq.data.maturityDate = data[3];
                     }
                     else
                     {
-                        responseInq.responseCode = "0101";
-                        responseInq.responseDescription = "Inquiry Failed";
-                        responseInq.errorDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
+                        responseInq.responseCode = ResponseCodeModels.GetResponseCodePSW(pswRes.RC);
+                        responseInq.responseDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
                     }
                 }
                 else
                 {
-                    return null;
+                    responseInq.responseCode = "0102";
+                    responseInq.responseDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                responseInq.responseCode = "81";
+                responseInq.responseDescription = ResponseCodeModels.GetResponseDescription(responseInq.responseCode);
+
             }
             string wsEndTime = DateTime.Now.ToString();
-            InsertLogInquiryCC(requestInq, responseInq, pswReq, respond, wsEndTime, wsStartTime, System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString());
+            InsertLogInquiryCC(requestInq, responseInq, pswReq, pswRes, wsEndTime, wsStartTime, System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString());
             return responseInq;
         }
 
@@ -303,7 +279,31 @@ namespace API_PAYMENT.Models
             string url = ConstantModels.URLINQPAY;
             CreditCardModels.PSWRequest pswReq = new CreditCardModels.PSWRequest();
             CreditCardModels.CreditCardPaymentRespone responsePay = new CreditCardModels.CreditCardPaymentRespone();
-
+            CreditCardModels.PSWServicePayResponse pswRes = new CreditCardModels.PSWServicePayResponse();
+            string bankCode = GetBinMap(requestPay.cardNumber.Substring(0, 6));
+            switch (bankCode)
+            {
+                case "BRI":
+                    pswReq.Key = ConstantModels.Key_CCBRI;
+                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
+                    pswReq.SubProduct = ConstantModels.SubProductINQ;
+                    break;
+                case "BCA":
+                    pswReq.Key = ConstantModels.Key_CCBRI;
+                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
+                    pswReq.SubProduct = ConstantModels.SubProductINQ;
+                    break;
+                case "BNI":
+                    pswReq.Key = ConstantModels.Key_CCBRI;
+                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
+                    pswReq.SubProduct = ConstantModels.SubProductINQ;
+                    break;
+                default:
+                    pswReq.Key = "";
+                    pswReq.ProductID = "";
+                    pswReq.SubProduct = "";
+                    break;
+            }
             pswReq.InputData = requestPay.cardNumber;
             pswReq.Key = ConstantModels.Key_CCBRI;
             pswReq.ProductID = ConstantModels.ProductID_CCBRI;
@@ -345,6 +345,8 @@ namespace API_PAYMENT.Models
             postStream.Write(postBytes, 0, postBytes.Length);
             postStream.Flush();
             postStream.Close();
+
+            string wsStartTime = DateTime.Now.ToString();
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -353,23 +355,41 @@ namespace API_PAYMENT.Models
                     Stream answerStream = response.GetResponseStream();
                     StreamReader answerReader = new StreamReader(answerStream);
                     String jsonAnswer = answerReader.ReadToEnd();
-                    CreditCardModels.PSWServiceResponse respond = JsonConvert.DeserializeObject<CreditCardModels.PSWServiceResponse>(jsonAnswer);
-                    responsePay.responseCode = respond.RC;
-                    responsePay.responseDescription = respond.Description;
-                   // responsePay.data.Data1 = respond.Data1;
-                   // responsePay.data.Data2 = respond.Data2;
+                    pswRes = JsonConvert.DeserializeObject<CreditCardModels.PSWServicePayResponse>(jsonAnswer);
 
-                    return responsePay;
+                    if (pswRes.RC == "00")
+                    {
+                        responsePay.data.cardNumber = requestPay.cardNumber;
+                        responsePay.data.reference = requestPay.reference;
+                        responsePay.data.journalSeq = pswRes.JurnalSeq;
+                        responsePay.responseCode = "0200";
+                        responsePay.responseDescription = ResponseCodeModels.GetResponseDescription(responsePay.responseCode);
+                    }
+                    else
+                    {
+                        responsePay.responseCode = ResponseCodeModels.GetResponseCodePSW(pswRes.RC);
+                        responsePay.responseDescription = ResponseCodeModels.GetResponseDescription(responsePay.responseCode);
+                    }
+                    // responsePay.data.Data2 = respond.Data2;
+
                 }
                 else
                 {
-                    return null;
+                    responsePay.responseCode = "0202";
+                    responsePay.responseDescription = ResponseCodeModels.GetResponseDescription(responsePay.responseCode);
+
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                responsePay.responseCode = "81";
+                responsePay.responseDescription = ResponseCodeModels.GetResponseDescription(responsePay.responseCode);
+
             }
+
+            string wsEndTime = DateTime.Now.ToString();
+            InsertTransactionCC(requestPay, responsePay, pswReq, pswRes, wsStartTime, wsEndTime, System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString());
+            return responsePay;
 
         }
 
@@ -379,13 +399,20 @@ namespace API_PAYMENT.Models
             //util.ConnectToApplicationDbase();
             string acct;
             string sql;
-
-            sql = "SELECT * FROM CCTRANSACTION with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "' and FEATURE_CODE = '"+ featureCode +"'";
+            
+            sql = "SELECT * FROM FEATUREMAP with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "' and FEATURE_CODE = '"+ featureCode +"'";
             DataTable dt = util.setDataTable(sql);
 
-            acct = dt.Rows[0]["SOURCE_ACCOUNT"].ToString();
-
-            return acct;
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                acct = dt.Rows[0]["SOURCE_ACCOUNT"].ToString().Trim();
+                return acct.PadLeft(15, '0');
+            }
+            else
+            {
+                acct = "";
+                return acct;
+            }
         }
 
         public static string GetBinMap(string bincode)
@@ -403,7 +430,7 @@ namespace API_PAYMENT.Models
             return BANK_CODE;
         }
 
-        public static void InsertLogInquiryCC(CreditCardModels.CreditCardInquiryRequest InqRequest, CreditCardModels.CreditCardInquiryRespone InqResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServiceResponse pswRes, string wsStartTime, string wsEndTime, string ip)
+        public static void InsertLogInquiryCC(CreditCardModels.CreditCardInquiryRequest InqRequest, CreditCardModels.CreditCardInquiryRespone InqResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServiceInqResponse pswRes, string wsStartTime, string wsEndTime, string ip)
         {
             Util util = new Util();
             string sql;
@@ -428,11 +455,7 @@ namespace API_PAYMENT.Models
                 maturity_date = "-";
             }
             string errMsg = "";
-            if (InqResponse.responseCode != "0600")
-            {
-                InqResponse.errorDescription = InqResponse.errorDescription == null ? "" : InqResponse.errorDescription;
-                errMsg = ((InqResponse.responseCode == null ? 0 : InqResponse.errorDescription.Length) > 250 ? InqResponse.errorDescription.Substring(0, 250) : InqResponse.errorDescription) + " (" + pswRes.RC + ")";
-            }
+            
 
             sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
                   "[SUB_PRODUCT],[SEQUENCE_TRX],[CC_NUM],[KEY],[NAME],[BILLING],[MINIMUM_PAYMENT],[MATURITY_DATE],[RC],[RC_DESC],[ERRMSG],[IP_ADDRESS]) " +
@@ -443,6 +466,50 @@ namespace API_PAYMENT.Models
 
             util.cmdSQLScalar(sql);
         }
+
+        public static void InsertTransactionCC(CreditCardModels.CreditCardPaymentRequest PayRequest, CreditCardModels.CreditCardPaymentRespone PayResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServicePayResponse pswRes, string wsStartTime, string wsEndTime, string ip)
+        {
+            Util util = new Util();
+            string sql;
+            string name;
+            string minimum_pay;
+            string billing;
+            string maturity_date;
+            
+            string errMsg = "";
+
+            
+            sql = "INSERT INTO CCTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[CC_TYPE],[SEQUENCE_TRX],[TOTAL_AMOUNT]," +
+                 "[CARD_NUMBER],[NAMA],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC],[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF])" +
+                  "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "', '" + wsStartTime + "', '" + wsEndTime + "'," +
+                  "'" + PayRequest.instiutionCode + "', '" + pswReq.ProductID + "','"  + pswReq.SequenceTrx + "', '" + PayRequest.amount + "', '" +
+                  PayRequest.cardNumber + "', '"  + PayRequest.cardNumber + "','" + DateTime.Now.ToShortDateString() + "','" + DateTime.Now.ToShortTimeString() + "','" 
+                  + PayResponse.responseCode + "','" + PayResponse.responseDescription + "','" + errMsg + "','" + pswRes.JurnalSeq + "','" + ip + "','" + PayRequest.reference + "')";
+
+            util.cmdSQLScalar(sql);
+        }
+
+        public static Boolean CheckReferralNumberCreditCard(string noref, string kodeInst)
+        {
+            Boolean result;
+            Util util = new Util();
+            string sql;
+
+            sql = "SELECT * FROM CCTRANSACTION WITH (NOLOCK) WHERE NOMOR_REFF='" + noref + "' AND RC = '0200' AND INSTITUTION_CODE = '" + kodeInst + "'";
+            DataTable dt = util.setDataTable(sql);
+
+            if (dt.Rows.Count > 0)
+            {
+                result = true;
+                return result;
+            }
+            else
+            {
+                result = false;
+                return result;
+            }
+        }
+
         //add Credit Card helper here
     }
 }

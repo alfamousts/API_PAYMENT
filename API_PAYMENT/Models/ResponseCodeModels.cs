@@ -51,6 +51,25 @@ namespace API_PAYMENT.Models
                 case "0202":
                     return "Payment timeout";
 
+                //Fikri, start response code TELKOM
+                case "0104":
+                    return "Card number must be a number";
+                case "0105":
+                    return "Total amount must not be empty";
+                case "0106":
+                    return "Card Name must not be empty";
+                case "0107":
+                    return "Billing code must not be empty";
+                case "0108":
+                    return "Total amount must be a number";
+                case "0109":
+                    return "Total amount must not be a negative number";
+                case "0110":
+                    return "Card Number must not be empty";
+                case "0111":
+                    return "Source account has not been registered";
+                //Fikri, end response code TELKOM
+
                 //Hanum, start response code TELKOM
                 case "0204":
                     return "Billing number must be a number";

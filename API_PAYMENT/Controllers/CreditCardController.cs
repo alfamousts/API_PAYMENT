@@ -44,9 +44,9 @@ namespace API_PAYMENT.Controllers
                 return Ok(response);
             }
 
-            featureCode = "00001";
+            featureCode = ConstantModels.FeatureCode_CC;
 
-            string rc = CreditCardHelper.ValidateInputPaymentCreditCard(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
+            string rc = CreditCardValidation.ValidatePaymentCC(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
 
             if (rc.Equals("0005"))
             {
@@ -55,8 +55,7 @@ namespace API_PAYMENT.Controllers
             else
             {
                 response.responseCode = rc;
-                response.responseDescription = "Inquiry failed";
-                response.errorDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
+                response.responseDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
             }
 
             return Ok(response);
@@ -72,15 +71,14 @@ namespace API_PAYMENT.Controllers
         {
         }
 
-        public IHttpActionResult Get(string cardNumber, string issuerBank)
+        public IHttpActionResult Get(string cardNumber)
         {
             CreditCardModels.CreditCardInquiryRequest request = new CreditCardModels.CreditCardInquiryRequest();
             CreditCardModels.CreditCardInquiryRespone response = new CreditCardModels.CreditCardInquiryRespone();
 
             request.cardNumber = cardNumber;
-            request.issuerBank = issuerBank;
 
-            if (cardNumber == null || cardNumber == "" || issuerBank == null || issuerBank == "")
+            if (cardNumber == null || cardNumber == "")
             {
                 return BadRequest();
             }
@@ -105,9 +103,9 @@ namespace API_PAYMENT.Controllers
                 return Ok(response);
             }
 
-            featureCode = "00001";
+            featureCode = ConstantModels.FeatureCode_CC;
 
-            string rc = CreditCardHelper.ValidateInputInquiryCreditCard(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
+            string rc = CreditCardValidation.ValidateInputInquiryCC(ref request, featureCode);//telkomHelper.ValidateInputInquiryTelkom(ref request, IP);
 
             if (rc.Equals("0005"))
             {
@@ -116,8 +114,7 @@ namespace API_PAYMENT.Controllers
             else
             {
                 response.responseCode = rc;
-                response.responseDescription = "Inquiry failed";
-                response.errorDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
+                response.responseDescription = ResponseCodeModels.GetResponseDescription(response.responseCode);
             }
 
             return Ok(response);
