@@ -68,7 +68,7 @@ namespace API_PAYMENT.Models
                     logwriter.Close();
                 }
             }
-            catch { }
+            catch(Exception ex) { }
         }
     }
 }
