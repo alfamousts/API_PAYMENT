@@ -9,18 +9,16 @@ namespace API_PAYMENT.Models
     {
         TelkomHelper telkomHelper = new TelkomHelper();
 
-        public string ValidateInputInquiryTelkom(ref TelkomModels.TelkomInquiryRequest AutoInqRequest, string ip)
+        public string ValidateInputInquiryTelkom(ref TelkomModels.TelkomInquiryRequest AutoInqRequest)
         {
             decimal number;
             string rc = "";
-
-            string sourceAccount = telkomHelper.GetSourceAccountTelkom(AutoInqRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom);
 
             if (String.IsNullOrEmpty(AutoInqRequest.BillingNumber))
             {
                 rc = "0201";
             }
-            else if (String.IsNullOrEmpty(sourceAccount))
+            else if (String.IsNullOrEmpty(AutoInqRequest.SourceAccount))
             {
                 rc = "0202";
             }
@@ -40,28 +38,25 @@ namespace API_PAYMENT.Models
             return rc;
         }
 
-        public string ValidatePaymentTelkom(ref TelkomModels.TelkomPaymentRequest PayRequest, string ip)
+        public string ValidatePaymentTelkom(ref TelkomModels.TelkomPaymentRequest PayRequest)
         {
             Boolean ceknoref = telkomHelper.CheckReferralNumberTelkom(PayRequest.ReferralNumber, PayRequest.InstitutionCode);
             decimal number;
             string rc = "";
 
-            string sourceAccount = telkomHelper.GetSourceAccountTelkom(PayRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom);
-
             if (!ceknoref)
             {
-                //if (String.IsNullOrEmpty(PayRequest.Amount) || String.IsNullOrEmpty(PayRequest.beneficiaryAccount) || String.IsNullOrEmpty(PayRequest.bankCode) || String.IsNullOrEmpty(PayRequest.beneficiaryAccountName) || String.IsNullOrEmpty(PayRequest.sourceAccount) || String.IsNullOrEmpty(PayRequest.noReferral))
                 if (String.IsNullOrEmpty(PayRequest.TotalAmount))
                 {
                     rc = "0205"; //Total amount tidak boleh kosong
                 }
                 else if (String.IsNullOrEmpty(PayRequest.BillingNumber))
                 {
-                    rc = "0201"; //Billing number tidak boleh kosong
+                    rc = "0210"; //Billing number tidak boleh kosong
                 }
-                else if (String.IsNullOrEmpty(sourceAccount))
+                else if (String.IsNullOrEmpty(PayRequest.SourceAccount))
                 {
-                    rc = "0202"; //Source account tidak boleh kosong
+                    rc = "0211"; //Source account tidak boleh kosong
                 }
                 else if (String.IsNullOrEmpty(PayRequest.Name))
                 {
