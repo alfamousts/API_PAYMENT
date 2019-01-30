@@ -28,16 +28,14 @@ namespace API_PAYMENT.Controllers
             TelkomModels.TelkomInquiryRequest request = new TelkomModels.TelkomInquiryRequest();
             TelkomHelper telkomHelper = new TelkomHelper();
             TelkomValidation telkomValidation = new TelkomValidation();
-            //WsAccountOnline accountOnline = new WsAccountOnline();
-
+            
             var context = new ValidationContext(Request, serviceProvider: null, items: null);
             var validationResults = new List<ValidationResult>();
 
             var authHeader = Request.Headers.Authorization;
 
             billingNumber = (billingNumber is null ? "" : billingNumber);
-            //beneficiaryAccount = (beneficiaryAccount is null ? "" : beneficiaryAccount);
-
+            
             request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
             request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
             request.BillingNumber = billingNumber;
@@ -56,17 +54,16 @@ namespace API_PAYMENT.Controllers
                 return result;
             }
 
-            string rc = telkomValidation.ValidateInputInquiryTelkom(ref request, IP);
+            string rc = telkomValidation.ValidateInputInquiryTelkom(ref request);
 
             if (rc.Equals("0005"))
             {
-                result = telkomHelper.InquiryTelkom(ref request, IP); //accountOnline.inquiryAccountOnline(ref request, IP);
+                result = telkomHelper.InquiryTelkom(ref request, IP);
             }
             else
             {
                 result.responseCode = rc;
                 result.responseDescription = "Inquiry gagal";
-                result.errorDescription = ResponseCodeModels.GetResponseDescription(result.responseCode);
             }
 
             return result;
@@ -96,11 +93,12 @@ namespace API_PAYMENT.Controllers
 
             request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
             request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
+            request.SourceAccount = telkomHelper.GetSourceAccountTelkom(request.InstitutionCode, ConstantModels.FeatureCode_Telkom);
             request.TotalAmount = (request.TotalAmount is null ? "" : request.TotalAmount);
             request.FirstBill = (request.FirstBill is null ? "" : request.FirstBill);
             request.SecondBill = (request.SecondBill is null ? "" : request.SecondBill);
             request.ThirdBill = (request.ThirdBill is null ? "" : request.ThirdBill);
-            request.SourceAccount = (request.SourceAccount is null ? "0".PadLeft(15, '0') : request.SourceAccount.PadLeft(15, '0'));
+            request.BillingNumber = (request.BillingNumber is null ? "" : request.BillingNumber);
             request.Name = (request.Name is null ? "" : request.Name);
             request.BillingCode = (request.BillingCode is null ? "" : request.BillingCode);
             request.ReferralNumber = (request.ReferralNumber is null ? "" : request.ReferralNumber);
@@ -117,7 +115,7 @@ namespace API_PAYMENT.Controllers
                 return BadRequest();
             }
 
-            string rc = telkomValidation.ValidatePaymentTelkom(ref request, IP);
+            string rc = telkomValidation.ValidatePaymentTelkom(ref request);
 
             if (rc.Equals("0005"))
             {
@@ -127,7 +125,6 @@ namespace API_PAYMENT.Controllers
             {
                 result.responseCode = rc;
                 result.responseDescription = "Payment gagal";
-                result.errorDescription = ResponseCodeModels.GetResponseDescription(result.responseCode);
             }
 
             return Ok(result);
