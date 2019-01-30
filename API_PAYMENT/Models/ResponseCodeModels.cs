@@ -29,17 +29,20 @@ namespace API_PAYMENT.Models
                     return "Invalid username (institution code) or password (institution key)";
                 case "0009":
                     return "IP address not allowed";
-                case "0010":
-                    return "Referral number must not be empty";
-                case "0011":
-                    return "Referral number is already used";
                 case "0012":
+                    return "Referral number must not be empty";
+                case "0013":
+                    return "Referral number is already used";
+                case "0014":
                     return "Referral number must be a number";
                 case "0100":
                     return "Success";
                 case "0200":
                     return "Success";
                 
+                case "0011":
+                    return "Feature not allowed";
+
                 case "81":
                     return "Throw an exception";
 
