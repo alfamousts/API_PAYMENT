@@ -22,6 +22,9 @@ namespace API_PAYMENT.Models
         public const string SubProductINQ = "301000";
         public const string SubProductPAY = "401000";
 
+        public const string ProductID_CCOTHER = "CCBANKLAIN";
+        public const string SubProductINQOther = "380000";
+        public const string SubProductPAYOther = "180000";
         //FIKRI, end API_PAYMENT CCBRI
         // Add Constant Here
         public const string SUCCESSCODEINQ = "0100";

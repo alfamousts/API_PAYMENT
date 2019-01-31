@@ -15,17 +15,13 @@ namespace API_PAYMENT.Models
             decimal number;
             string rc = "";
 
-            if (helper.FeatureCheck(AutoInqRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
+            if (helper.FeatureCheck(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom))
             {
-                if (String.IsNullOrEmpty(AutoInqRequest.BillingNumber))
+                if (String.IsNullOrEmpty(AutoInqRequest.billingNumber))
                 {
                     rc = "0210";
                 }
-                else if (String.IsNullOrEmpty(AutoInqRequest.SourceAccount))
-                {
-                    rc = "0211";
-                }
-                else if (!decimal.TryParse(AutoInqRequest.BillingNumber, out number))
+                else if (!decimal.TryParse(AutoInqRequest.billingNumber, out number))
                 {
                     rc = "0204";
                 }
@@ -44,51 +40,47 @@ namespace API_PAYMENT.Models
 
         public string ValidatePaymentTelkom(ref TelkomModels.TelkomPaymentRequest PayRequest)
         {
-            Boolean ceknoref = telkomHelper.CheckReferenceTelkom(PayRequest.Reference, PayRequest.InstitutionCode);
+            Boolean ceknoref = telkomHelper.CheckReferenceTelkom(PayRequest.reference, PayRequest.institutionCode);
             decimal number;
             string rc = "";
 
-            if (helper.FeatureCheck(PayRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom))
+            if (helper.FeatureCheck(PayRequest.institutionCode, ConstantModels.FeatureCode_Telkom))
             {
                 if (!ceknoref)
                 {
-                    if (String.IsNullOrEmpty(PayRequest.TotalAmount))
+                    if (String.IsNullOrEmpty(PayRequest.totalAmount))
                     {
                         rc = "0205"; //Total amount tidak boleh kosong
                     }
-                    else if (String.IsNullOrEmpty(PayRequest.BillingNumber))
+                    else if (String.IsNullOrEmpty(PayRequest.billingNumber))
                     {
                         rc = "0210"; //Billing number tidak boleh kosong
                     }
-                    else if (String.IsNullOrEmpty(PayRequest.SourceAccount))
-                    {
-                        rc = "0211"; //Source account tidak boleh kosong
-                    }
-                    else if (String.IsNullOrEmpty(PayRequest.Name))
+                    else if (String.IsNullOrEmpty(PayRequest.name))
                     {
                         rc = "0206"; //Name tidak boleh kosong
                     }
-                    else if (String.IsNullOrEmpty(PayRequest.BillingCode))
+                    else if (String.IsNullOrEmpty(PayRequest.billingCode))
                     {
                         rc = "0207"; //Billing code tidak boleh kosong
                     }
-                    else if (String.IsNullOrEmpty(PayRequest.Reference))
+                    else if (String.IsNullOrEmpty(PayRequest.reference))
                     {
-                        rc = "0012"; //Referral number tidak boleh kosong
+                        rc = "0012"; //Reference tidak boleh kosong
                     }
-                    else if (!decimal.TryParse(PayRequest.TotalAmount.Replace(",", ""), out number))
+                    else if (!decimal.TryParse(PayRequest.totalAmount.Replace(",", ""), out number))
                     {
                         rc = "0208"; //Total amount mengandung karakter bukan angka
                     }
-                    else if (System.Convert.ToDouble(PayRequest.TotalAmount.Replace(",", "")) < 1)
+                    else if (System.Convert.ToDouble(PayRequest.totalAmount.Replace(",", "")) < 1)
                     {
                         rc = "0209"; //Total amount tidak boleh 0 atau bernilai negatif
                     }
-                    else if ((PayRequest.FirstBill.Split('#')).Length == 1 || (PayRequest.SecondBill.Split('#')).Length == 1 || (PayRequest.ThirdBill.Split('#')).Length == 1)
+                    else if ((PayRequest.firstBill.Split('#')).Length == 1 || (PayRequest.secondBill.Split('#')).Length == 1 || (PayRequest.thirdBill.Split('#')).Length == 1)
                     {
                         rc = "0212"; //Cek format
                     }
-                    else if ((PayRequest.BillingCode.Split('#')).Length < 3)
+                    else if ((PayRequest.billingCode.Split('#')).Length < 3)
                     {
                         rc = "0213"; //Cek format
                     }
@@ -99,7 +91,7 @@ namespace API_PAYMENT.Models
                 }
                 else
                 {
-                    rc = "0013"; //Nomor referral sudah pernah digunakan
+                    rc = "0013"; //Reference sudah pernah digunakan
                 }
             }
             else
