@@ -72,6 +72,17 @@ namespace API_PAYMENT.Models
             }
         }
 
+        public void InsertActivityLog(string institutionCode, string institutionKey, string urlHit, string IP, string datetime, string method, string request)
+        {
+            Util util = new Util();
+
+            string sql = "INSERT INTO ACTIVITYLOG ([INSTITUTION_CODE],[INSTITUTION_KEY],[URL_HIT],[IP],[DATETIME],[METHOD],[REQUEST]) " +
+                  "VALUES ('" + institutionCode + "', '" + institutionKey + "', '" + urlHit + "', " + "'" + IP + "', '" + datetime + "', '" 
+                  + method + "', '" + (request.Replace("\n","")).Replace("\t","").ToString() + "')";
+
+            util.cmdSQLScalar(sql);
+        }
+
         public void logging(string instFolder, string filename, string data)
         {
             try
