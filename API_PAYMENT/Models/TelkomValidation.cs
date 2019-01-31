@@ -84,11 +84,11 @@ namespace API_PAYMENT.Models
                     {
                         rc = "0209"; //Total amount tidak boleh 0 atau bernilai negatif
                     }
-                    else if ((PayRequest.FirstBill.Split('#')).Length < 1 || (PayRequest.SecondBill.Split('#')).Length < 1 || (PayRequest.ThirdBill.Split('#')).Length < 1)
+                    else if ((PayRequest.FirstBill.Split('#')).Length == 1 || (PayRequest.SecondBill.Split('#')).Length == 1 || (PayRequest.ThirdBill.Split('#')).Length == 1)
                     {
                         rc = "0212"; //Cek format
                     }
-                    else if ((PayRequest.BillingCode.Split('#')).Length < 1)
+                    else if ((PayRequest.BillingCode.Split('#')).Length < 3)
                     {
                         rc = "0213"; //Cek format
                     }
