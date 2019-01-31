@@ -63,7 +63,7 @@ namespace API_PAYMENT.Controllers
             else
             {
                 result.responseCode = rc;
-                result.responseDescription = "Inquiry gagal";
+                result.responseDescription = ResponseCodeModels.GetResponseDescription(rc);
             }
 
             return result;
@@ -101,7 +101,7 @@ namespace API_PAYMENT.Controllers
             request.BillingNumber = (request.BillingNumber is null ? "" : request.BillingNumber);
             request.Name = (request.Name is null ? "" : request.Name);
             request.BillingCode = (request.BillingCode is null ? "" : request.BillingCode);
-            request.ReferralNumber = (request.ReferralNumber is null ? "" : request.ReferralNumber);
+            request.Reference = (request.Reference is null ? "" : request.Reference);
             
             var isValid = Validator.TryValidateObject(Request, context, validationResults);
             if (!isValid)
@@ -124,7 +124,7 @@ namespace API_PAYMENT.Controllers
             else
             {
                 result.responseCode = rc;
-                result.responseDescription = "Payment gagal";
+                result.responseDescription = ResponseCodeModels.GetResponseDescription(rc);
             }
 
             return Ok(result);

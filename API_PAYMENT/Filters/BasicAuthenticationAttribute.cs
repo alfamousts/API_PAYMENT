@@ -9,7 +9,8 @@ using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
 using System.Data;
 using API_PAYMENT.Models;
-
+using System.IO;
+using System.Threading.Tasks;
 
 namespace API_PAYMENT.Filters
 {
@@ -34,6 +35,14 @@ namespace API_PAYMENT.Filters
                 //Check source IP
                 string sourceIP = System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString(); //InstitutionCredentials.IP();
                 bool allowedIP = helper.CheckIP(sourceIP, institutionCode);
+
+                //Insert ke tabel activity log
+                string datetime = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                string urlHit = actionContext.Request.RequestUri.ToString();
+                string method = actionContext.Request.Method.ToString();
+                string requestBody = new StreamReader(System.Web.HttpContext.Current.Request.InputStream).ReadToEnd();
+
+                helper.InsertActivityLog(institutionCode, institutionKey, urlHit, sourceIP, datetime, method, requestBody);
 
                 //Check Institution Credential
                 DataTable dtInst = helper.GetParameterInstitusiDT(institutionCode, "INSTITUTION_SHORTNAME, INSTITUTION_KEY");

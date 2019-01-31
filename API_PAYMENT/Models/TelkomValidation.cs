@@ -44,7 +44,7 @@ namespace API_PAYMENT.Models
 
         public string ValidatePaymentTelkom(ref TelkomModels.TelkomPaymentRequest PayRequest)
         {
-            Boolean ceknoref = telkomHelper.CheckReferralNumberTelkom(PayRequest.ReferralNumber, PayRequest.InstitutionCode);
+            Boolean ceknoref = telkomHelper.CheckReferenceTelkom(PayRequest.Reference, PayRequest.InstitutionCode);
             decimal number;
             string rc = "";
 
@@ -72,9 +72,9 @@ namespace API_PAYMENT.Models
                     {
                         rc = "0207"; //Billing code tidak boleh kosong
                     }
-                    else if (String.IsNullOrEmpty(PayRequest.ReferralNumber))
+                    else if (String.IsNullOrEmpty(PayRequest.Reference))
                     {
-                        rc = "0014"; //Referral number tidak boleh kosong
+                        rc = "0012"; //Referral number tidak boleh kosong
                     }
                     else if (!decimal.TryParse(PayRequest.TotalAmount.Replace(",", ""), out number))
                     {
@@ -84,9 +84,13 @@ namespace API_PAYMENT.Models
                     {
                         rc = "0209"; //Total amount tidak boleh 0 atau bernilai negatif
                     }
-                    else if (!decimal.TryParse(PayRequest.ReferralNumber, out number))
+                    else if ((PayRequest.FirstBill.Split('#')).Length == 1 || (PayRequest.SecondBill.Split('#')).Length == 1 || (PayRequest.ThirdBill.Split('#')).Length == 1)
                     {
-                        rc = "0012"; //Referral number mengandung karakter bukan angka
+                        rc = "0212"; //Cek format
+                    }
+                    else if ((PayRequest.BillingCode.Split('#')).Length < 3)
+                    {
+                        rc = "0213"; //Cek format
                     }
                     else
                     {

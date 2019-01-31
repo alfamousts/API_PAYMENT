@@ -190,5 +190,12 @@ namespace API_PAYMENT.Models
 
             return String.Empty;
         }
+
+        public override String ToString()
+        {
+            String result = "";
+            result = Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return result;
+        }
     }
 }

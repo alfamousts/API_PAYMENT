@@ -33,8 +33,7 @@ namespace API_PAYMENT.Models
                     return "Referral number must not be empty";
                 case "0013":
                     return "Referral number is already used";
-                case "0014":
-                    return "Referral number must be a number";
+
                 case "0100":
                     return "Inquiry Success";
                 case "0200":
@@ -85,6 +84,10 @@ namespace API_PAYMENT.Models
                     return "Billing number must not be empty";
                 case "0211":
                     return "Source account has not been registered";
+                case "0212":
+                    return "Invalid input first bill/second bill/third bill format";
+                case "0213":
+                    return "Invalid input billing code format";
                 //Hanum, end response code TELKOM
 
                 //Hanum, start response code PSW
