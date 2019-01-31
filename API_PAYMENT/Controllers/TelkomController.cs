@@ -36,10 +36,9 @@ namespace API_PAYMENT.Controllers
 
             billingNumber = (billingNumber is null ? "" : billingNumber);
             
-            request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
-            request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
-            request.BillingNumber = billingNumber;
-            request.SourceAccount = telkomHelper.GetSourceAccountTelkom(request.InstitutionCode, ConstantModels.FeatureCode_Telkom);
+            request.institutionCode = InstitutionCredentials.InstitutionCode(authHeader);
+            request.institutionKey = InstitutionCredentials.InstitutionKey(authHeader);
+            request.billingNumber = billingNumber;
 
             string IP = InstitutionCredentials.IP();
 
@@ -91,17 +90,16 @@ namespace API_PAYMENT.Controllers
             var validationResults = new List<ValidationResult>();
             var authHeader = Request.Headers.Authorization;
 
-            request.InstitutionCode = InstitutionCredentials.InstitutionCode(authHeader);
-            request.InstitutionKey = InstitutionCredentials.InstitutionKey(authHeader);
-            request.SourceAccount = telkomHelper.GetSourceAccountTelkom(request.InstitutionCode, ConstantModels.FeatureCode_Telkom);
-            request.TotalAmount = (request.TotalAmount is null ? "" : request.TotalAmount);
-            request.FirstBill = (request.FirstBill is null ? "" : request.FirstBill);
-            request.SecondBill = (request.SecondBill is null ? "" : request.SecondBill);
-            request.ThirdBill = (request.ThirdBill is null ? "" : request.ThirdBill);
-            request.BillingNumber = (request.BillingNumber is null ? "" : request.BillingNumber);
-            request.Name = (request.Name is null ? "" : request.Name);
-            request.BillingCode = (request.BillingCode is null ? "" : request.BillingCode);
-            request.Reference = (request.Reference is null ? "" : request.Reference);
+            request.institutionCode = InstitutionCredentials.InstitutionCode(authHeader);
+            request.institutionKey = InstitutionCredentials.InstitutionKey(authHeader);
+            request.totalAmount = (request.totalAmount is null ? "" : request.totalAmount);
+            request.firstBill = (request.firstBill is null ? "" : request.firstBill);
+            request.secondBill = (request.secondBill is null ? "" : request.secondBill);
+            request.thirdBill = (request.thirdBill is null ? "" : request.thirdBill);
+            request.billingNumber = (request.billingNumber is null ? "" : request.billingNumber);
+            request.name = (request.name is null ? "" : request.name);
+            request.billingCode = (request.billingCode is null ? "" : request.billingCode);
+            request.reference = (request.reference is null ? "" : request.reference);
             
             var isValid = Validator.TryValidateObject(Request, context, validationResults);
             if (!isValid)

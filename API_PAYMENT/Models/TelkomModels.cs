@@ -22,32 +22,61 @@ namespace API_PAYMENT.Models
         /// <summary>
         ///  Telkom Inquiry Models
         /// </summary>
-        public class TelkomInquiryRequest
+        public class PSWServiceRequest
         {
             [StringLength(20)]
-            public string InstitutionCode { get; set; }
-            [StringLength(100)]
-            public string InstitutionKey { get; set; }
+            public string Transdate { get; set; } = DateTime.Now.ToString("dd/MM/y");
             [StringLength(20)]
-            public string TransactionDate { get; set; } = DateTime.Now.ToString("dd/MM/y");
+            public string Transtime { get; set; } = DateTime.Now.ToString("HH:mm:ss");
             [StringLength(20)]
-            public string TransactionTime { get; set; } = DateTime.Now.ToString("HH:mm:ss");
-            [StringLength(20)]
-            public string ChannelID { get; set; } = ConstantModels.ChannelID_Telkom;
+            public string ChannelID { get; set; } = ConstantModels.ChannelID_CCBRI;
             [StringLength(20)]
             public string ProductID { get; set; } = ConstantModels.ProductID_Telkom;
             [StringLength(20)]
-            public string SubProduct { get; set; } = ConstantModels.SubProductINQ_Telkom;
+            public string SubProduct { get; set; }
             [StringLength(20)]
-            public string SequenceTransaction { get; set; }
+            public string SequenceTrx{ get; set; }
+            [Required]
+            [StringLength(20)]
+            public string TotalAmount { get; set; } = "";
+            [Required]
+            [StringLength(20)]
+            public string FeeAmount { get; set; } = "0";
+            [Required]
+            [StringLength(20)]
+            public string AddAmount1 { get; set; } = "0";
+            [Required]
+            [StringLength(20)]
+            public string AddAmount2 { get; set; } = "0";
+            [Required]
+            [StringLength(20)]
+            public string AddAmount3 { get; set; } = "0";
             [Required]
             [StringLength(100)]
-            public string BillingNumber { get; set; } //InputData
+            public string InputData { get; set; }
             [Required]
             [StringLength(100)]
-            public string SourceAccount { get; set; } //Data1
+            public string Data1 { get; set; } = "";
+            [StringLength(100)]
+            public string Data2 { get; set; } = "-";
+            [StringLength(100)]
+            public string Data3 { get; set; } = "";
+            [Required]
+            [StringLength(100)]
+            public string Remark { get; set; } = "";
             [StringLength(100)]
             public string Key { get; set; } = ConstantModels.Key_Telkom;
+        }
+
+        public class TelkomInquiryRequest
+        {
+            [StringLength(20)]
+            public string institutionCode { get; set; }
+            [StringLength(100)]
+            public string institutionKey { get; set; }
+            [Required]
+            [StringLength(100)]
+            public string billingNumber { get; set; } //InputData
         }
 
         public class TelkomInquiryResponse
@@ -92,49 +121,32 @@ namespace API_PAYMENT.Models
         public class TelkomPaymentRequest
         {
             [StringLength(20)]
-            public string InstitutionCode { get; set; }
+            public string institutionCode { get; set; }
             [StringLength(100)]
-            public string InstitutionKey { get; set; }
-            [StringLength(20)]
-            public string TransactionDate { get; set; } = DateTime.Now.ToString("dd/MM/y");
-            [StringLength(20)]
-            public string TransactionTime { get; set; } = DateTime.Now.ToString("HH:mm:ss");
-            [StringLength(20)]
-            public string ChannelID { get; set; } = ConstantModels.ChannelID_Telkom;
-            [StringLength(20)]
-            public string ProductID { get; set; } = ConstantModels.ProductID_Telkom;
-            [StringLength(20)]
-            public string SubProduct { get; set; } = ConstantModels.SubProductPAY_Telkom;
-            [StringLength(20)]
-            public string SequenceTransaction { get; set; }
+            public string institutionKey { get; set; }
             [Required]
             [StringLength(20)]
-            public string TotalAmount { get; set; }
+            public string totalAmount { get; set; }
             [Required]
             [StringLength(20)]
-            public string FirstBill { get; set; } 
+            public string firstBill { get; set; } 
             [Required]
             [StringLength(20)]
-            public string SecondBill { get; set; } 
+            public string secondBill { get; set; } 
             [Required]
             [StringLength(20)]
-            public string ThirdBill { get; set; } 
+            public string thirdBill { get; set; } 
             [Required]
             [StringLength(100)]
-            public string BillingNumber { get; set; } //InputData
+            public string billingNumber { get; set; } //InputData
+            [StringLength(100)]
+            public string name { get; set; } //Data2
             [Required]
             [StringLength(100)]
-            public string SourceAccount { get; set; } //Data1
-            [StringLength(100)]
-            public string Name { get; set; } //Data2
+            public string billingCode { get; set; }
             [Required]
             [StringLength(100)]
-            public string BillingCode { get; set; }
-            [StringLength(100)]
-            public string Key { get; set; } = ConstantModels.Key_Telkom;
-            [Required]
-            [StringLength(100)]
-            public string Reference { get; set; }
+            public string reference { get; set; }
         }
 
         public class TelkomPaymentResponse
@@ -148,7 +160,11 @@ namespace API_PAYMENT.Models
         public class TelkomPaymentResponseData
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string JurnalSeq { get; set; }
+            public string billingNumber { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public string reference { get; set; }
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public string journalSeq { get; set; }
         }
 
         public class PSWServicePaymentResponse
@@ -191,7 +207,7 @@ namespace API_PAYMENT.Models
             }
         }
 
-        public void InsertLogInquiryTelkom(TelkomModels.TelkomInquiryRequest InqRequest, TelkomModels.TelkomInquiryResponse InqResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
+        public void InsertLogInquiryTelkom(TelkomModels.TelkomInquiryRequest InqRequest, TelkomModels.PSWServiceRequest PswRequest, TelkomModels.TelkomInquiryResponse InqResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
         {
             string sql;
             string errMsg = "";
@@ -203,15 +219,15 @@ namespace API_PAYMENT.Models
             sql = "INSERT INTO TELKOMINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[TRANSACTION_DATE],[TRANSACTION_TIME]" +
                 ",[CHANNEL_ID],[PRODUCT_ID],[SUB_PRODUCT],[SEQUENCE_TRX],[BILLING_NUMBER],[SOURCE_ACCOUNT],[KEY],[RC],[RC_DESC],[ERRMSG],[IP_ADDRESS]) " +
                   "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "', '" + wsStartTime + "', '" + wsEndTime + "', 'INQUIRY'," +
-                  "'" + InqRequest.InstitutionCode + "', '" + InqRequest.TransactionDate + "', '" + InqRequest.TransactionTime + "', '" + InqRequest.ChannelID +
-                  "','" + InqRequest.ProductID + "', '" + InqRequest.SubProduct + "', '" + InqRequest.SequenceTransaction + "', '" + InqRequest.BillingNumber +
-                  "', '" + InqRequest.SourceAccount + "', '" + InqRequest.Key + "', '" + InqResponse.responseCode + "','" + InqResponse.responseDescription +
+                  "'" + InqRequest.institutionCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PswRequest.ChannelID +
+                  "','" + PswRequest.ProductID + "', '" + PswRequest.SubProduct + "', '" + PswRequest.SequenceTrx + "', '" + InqRequest.billingNumber +
+                  "', '" + PswRequest.Data1 + "', '" + PswRequest.Key + "', '" + InqResponse.responseCode + "','" + InqResponse.responseDescription +
                   "','" + errMsg + "','" + ip + "')";
 
             util.cmdSQLScalar(sql);
         }
 
-        public void InsertTelkomTransaction(TelkomModels.TelkomPaymentRequest PayRequest, TelkomModels.TelkomPaymentResponse PayResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
+        public void InsertTelkomTransaction(TelkomModels.TelkomPaymentRequest PayRequest, TelkomModels.PSWServiceRequest PswRequest, TelkomModels.TelkomPaymentResponse PayResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
         {
             string sql;
             //string transDate = DateTime.Parse(PayRequest.TransactionDate).ToString("dd-MM-yyyy");
@@ -224,11 +240,11 @@ namespace API_PAYMENT.Models
             sql = "INSERT INTO TELKOMTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[SEQUENCE_TRX],[TOTAL_AMOUNT],[FIRST_BILL]" +
                 ",[SECOND_BILL],[THIRD_BILL],[BILLING_NUMBER],[SOURCE_ACCOUNT],[NAME],[BILLING_CODE],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC]" +
                 ",[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF]) " +
-                  "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "','" + wsStartTime + "', '" + wsEndTime + "', '" + PayRequest.InstitutionCode + 
-                  "', '" + PayRequest.SequenceTransaction + "', '" + PayRequest.TotalAmount + "', '" + PayRequest.FirstBill + "','" + PayRequest.SecondBill + 
-                  "', '" + PayRequest.ThirdBill + "', '" + PayRequest.BillingNumber + "','" + PayRequest.SourceAccount + "', '" + PayRequest.Name + 
-                  "', '" + PayRequest.BillingCode + "', '" + PayRequest.TransactionDate + "', '" + PayRequest.TransactionTime + "', '" + PayResponse.responseCode + 
-                  "', '" + PayResponse.responseDescription + "', '" + errorMsg + "','" + PayResponse.data.JurnalSeq + "', '" + ip + "', '" + PayRequest.Reference + "')";
+                  "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "','" + wsStartTime + "', '" + wsEndTime + "', '" + PayRequest.institutionCode + 
+                  "', '" + PswRequest.SequenceTrx + "', '" + PayRequest.totalAmount + "', '" + PayRequest.firstBill + "','" + PayRequest.secondBill + 
+                  "', '" + PayRequest.thirdBill + "', '" + PayRequest.billingNumber + "','" + PswRequest.Data1 + "', '" + PayRequest.name + 
+                  "', '" + PayRequest.billingCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PayResponse.responseCode + 
+                  "', '" + PayResponse.responseDescription + "', '" + errorMsg + "','" + PayResponse.data.journalSeq + "', '" + ip + "', '" + PayRequest.reference + "')";
 
             util.cmdSQLScalar(sql);
         }
@@ -254,14 +270,11 @@ namespace API_PAYMENT.Models
         }
 
         #region INQUIRY TELKOM
-        public TelkomModels.PSWServiceInquiryResponse PSWServiceInquiryTelkom(ref TelkomModels.TelkomInquiryRequest requestParam)
+        public TelkomModels.PSWServiceInquiryResponse PSWServiceInquiryTelkom(ref TelkomModels.PSWServiceRequest requestParam)
         {
             string url = ConstantModels.URLINQPAY_TELKOM;
 
-            string _requestInq = "[{\"Transdate\":\"" + DateTime.Now.ToString("dd/MM/y") + "\",\"Transtime\":\"" + DateTime.Now.ToString("HH:mm:ss") + "\",\"ChannelID\":\"" +
-                                requestParam.ChannelID + "\",\"ProductID\":\"" + requestParam.ProductID + "\",\"SubProduct\":\"" + requestParam.SubProduct + "\",\"SequenceTrx\"" +
-                                ":\"" + requestParam.SequenceTransaction + "\",\"InputData\":\"" + requestParam.BillingNumber + "\",\"Data1\":\"" + requestParam.SourceAccount + 
-                                "\",\"Key\":\"" + requestParam.Key + "\"}]";
+            string _requestInq = "[" + JsonConvert.SerializeObject(requestParam) + "]";
             string requestInq = "data=" + _requestInq;
 
             ASCIIEncoding ascii = new ASCIIEncoding();
@@ -314,22 +327,20 @@ namespace API_PAYMENT.Models
 
         public TelkomModels.TelkomInquiryResponse InquiryTelkom(ref TelkomModels.TelkomInquiryRequest AutoInqRequest, string ip)
         {
-            string request = "REQUEST : Transdate=" + DateTime.Now.ToString("dd/MM/y") + "|Transtime=" + DateTime.Now.ToString("HH:mm:ss") + "|ChannelID=" + AutoInqRequest.ChannelID +
-                             "|ProductID=" + AutoInqRequest.ProductID + "|SubProduct=" + AutoInqRequest.SubProduct + "|SequenceTrx=" + AutoInqRequest.SequenceTransaction +
-                             "|InputData=" + AutoInqRequest.BillingNumber + "|Data1=" + AutoInqRequest.SourceAccount + "|Key=" + AutoInqRequest.Key + "|IP=" + ip;
-            helper.logging(AutoInqRequest.InstitutionCode, "APIPAYMENT_INQUIRYTELKOM", request);
-            
             string wsStartTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
 
             TelkomHelper telkomHelper = new TelkomHelper();
+            TelkomModels.PSWServiceRequest PswRequest = new TelkomModels.PSWServiceRequest();
             TelkomModels.TelkomInquiryResponse AutoInqResponse = new TelkomModels.TelkomInquiryResponse();
             TelkomModels.PSWServiceInquiryResponse GetInqResponse = new TelkomModels.PSWServiceInquiryResponse();
 
             Random random = new Random();
-            AutoInqRequest.SequenceTransaction = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
-            AutoInqRequest.SourceAccount = telkomHelper.GetSourceAccountTelkom(AutoInqRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom);
+            PswRequest.SubProduct = ConstantModels.SubProductINQ_Telkom;
+            PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
+            PswRequest.InputData = AutoInqRequest.billingNumber;
+            PswRequest.Data1 = telkomHelper.GetSourceAccountTelkom(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
 
-            GetInqResponse = PSWServiceInquiryTelkom(ref AutoInqRequest);
+            GetInqResponse = PSWServiceInquiryTelkom(ref PswRequest);
 
             if (GetInqResponse == null)
             {
@@ -374,24 +385,19 @@ namespace API_PAYMENT.Models
 
             string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
             string response = "RESPONSE : ResponseCode=" + AutoInqResponse.responseCode + "|ResponseDescription=" + AutoInqResponse.responseDescription;
-            helper.logging(AutoInqRequest.InstitutionCode, "APIPAYMENT_INQUIRYTELKOM", response);
-            telkomHelper.InsertLogInquiryTelkom(AutoInqRequest, AutoInqResponse, wsStartTime, wsEndTime, ip, GetInqResponse.RC);
+            helper.logging(AutoInqRequest.institutionCode, "APIPAYMENT_INQUIRYTELKOM", response);
+            telkomHelper.InsertLogInquiryTelkom(AutoInqRequest, PswRequest, AutoInqResponse, wsStartTime, wsEndTime, ip, GetInqResponse.RC);
 
             return AutoInqResponse;
         }
         #endregion
 
         #region PAYMENT TELKOM
-        public TelkomModels.PSWServicePaymentResponse PSWServicePaymentTelkom(ref TelkomModels.TelkomPaymentRequest requestParam)
+        public TelkomModels.PSWServicePaymentResponse PSWServicePaymentTelkom(ref TelkomModels.PSWServiceRequest requestParam)
         {
             string url = ConstantModels.URLINQPAY_TELKOM;
 
-            string _requestInq = "[{\"Transdate\":\"" + requestParam.TransactionDate + "\",\"Transtime\":\"" + requestParam.TransactionTime + "\",\"ChannelID\":\"" +
-                                requestParam.ChannelID + "\",\"ProductID\":\"" + requestParam.ProductID + "\",\"SubProduct\":\"" + requestParam.SubProduct + "\",\"SequenceTrx\"" +
-                                ":\"" + requestParam.SequenceTransaction + "\",\"TotalAmount\":\"" + requestParam.TotalAmount + "\",\"AddAmount1\":\"" + requestParam.FirstBill + 
-                                "\",\"AddAmount2\":\"" + requestParam.SecondBill + "\",\"AddAmount3\":\"" + requestParam.ThirdBill + "\",\"InputData\":\"" + requestParam.BillingNumber + 
-                                "\",\"Data1\":\"" + requestParam.SourceAccount + "\",\"Data2\":\"" + requestParam.Name + "\",\"Data3\":\"" + requestParam.BillingCode +
-                                "\",\"Key\":\"" + requestParam.Key + "\"}]";
+            string _requestInq = "[" + JsonConvert.SerializeObject(requestParam) + "]";
             string requestInq = "data=" + _requestInq;
 
             ASCIIEncoding ascii = new ASCIIEncoding();
@@ -445,25 +451,26 @@ namespace API_PAYMENT.Models
         //added by Hanum 4-9-2018
         public TelkomModels.TelkomPaymentResponse PaymentTelkom(ref TelkomModels.TelkomPaymentRequest AutoPayRequest, string ip)
         {
-            string request = "REQUEST : Transdate=" + AutoPayRequest.TransactionDate + "|Transtime=" + AutoPayRequest.TransactionTime + "|ChannelID=" + AutoPayRequest.ChannelID +
-                             "|ProductID=" + AutoPayRequest.ProductID + "|SubProduct=" + AutoPayRequest.SubProduct + "|SequenceTrx=" + AutoPayRequest.SequenceTransaction +
-                             "|TotalAmount=" + AutoPayRequest.TotalAmount + "|AddAmount1=" + AutoPayRequest.FirstBill + "|AddAmount2=" + AutoPayRequest.SecondBill + 
-                             "|AddAmount3=" + AutoPayRequest.ThirdBill + "|InputData=" + AutoPayRequest.BillingNumber + "|Data1=" + AutoPayRequest.SourceAccount + 
-                             "|Data2=" + AutoPayRequest.Name + "|Data3=" + AutoPayRequest.BillingCode + "|Key=" + AutoPayRequest.Key + 
-                             "|ReferralNumber=" + AutoPayRequest.Reference + "|IP=" + ip;
-            helper.logging(AutoPayRequest.InstitutionCode, "WSOVERBOOKING_PAYMENTTELKOM", request);
-
             string wsStartTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME); //Hanum new
 
             TelkomHelper telkomHelper = new TelkomHelper();
+            TelkomModels.PSWServiceRequest PswRequest = new TelkomModels.PSWServiceRequest();
             TelkomModels.TelkomPaymentResponse AutoPayResponse = new TelkomModels.TelkomPaymentResponse();
             TelkomModels.PSWServicePaymentResponse GetPayResponse = new TelkomModels.PSWServicePaymentResponse();
 
             Random random = new Random();
-            AutoPayRequest.SequenceTransaction = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
-            AutoPayRequest.SourceAccount = telkomHelper.GetSourceAccountTelkom(AutoPayRequest.InstitutionCode, ConstantModels.FeatureCode_Telkom);
+            PswRequest.SubProduct = ConstantModels.SubProductPAY_Telkom;
+            PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
+            PswRequest.TotalAmount = AutoPayRequest.totalAmount;
+            PswRequest.AddAmount1 = AutoPayRequest.firstBill;
+            PswRequest.AddAmount2 = AutoPayRequest.secondBill;
+            PswRequest.AddAmount3 = AutoPayRequest.thirdBill;
+            PswRequest.InputData = AutoPayRequest.billingNumber;
+            PswRequest.Data1 = telkomHelper.GetSourceAccountTelkom(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);;
+            PswRequest.Data2 = AutoPayRequest.name;
+            PswRequest.Data3 = AutoPayRequest.billingCode;
 
-            GetPayResponse = PSWServicePaymentTelkom(ref AutoPayRequest);
+            GetPayResponse = PSWServicePaymentTelkom(ref PswRequest);
             string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
 
             if (GetPayResponse == null)
@@ -476,7 +483,9 @@ namespace API_PAYMENT.Models
             {
                 AutoPayResponse.responseCode = ConstantModels.SUCCESSCODEPAY;
                 AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEPAY);
-                AutoPayResponse.data.JurnalSeq = GetPayResponse.JurnalSeq.Trim();
+                AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
+                AutoPayResponse.data.reference = AutoPayRequest.reference;
+                AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
             }
             else //fail
             {
@@ -484,18 +493,11 @@ namespace API_PAYMENT.Models
                 AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
             }
 
-            //else if (GetPayResponse.RC == "68")
-            //{
-            //    AutoPayResponse.responseCode = ResponseCodeModels.GetResponseCodePayment(GetPayResponse.RC);
-            //    AutoPayResponse.responseDescription = "Do transfer online sedang diproses";
-            //    AutoPayResponse.errorDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
-            //}
-
             //insert ke tabel TELKOMTRANSACTION
-            telkomHelper.InsertTelkomTransaction(AutoPayRequest, AutoPayResponse, wsStartTime, wsEndTime, ip, GetPayResponse.RC);
+            telkomHelper.InsertTelkomTransaction(AutoPayRequest, PswRequest, AutoPayResponse, wsStartTime, wsEndTime, ip, GetPayResponse.RC);
 
             string response = "RESPONSE : ResponseCode=" + AutoPayResponse.responseCode + "-" + GetPayResponse.RC + "|ResponseDescription=" + AutoPayResponse.responseDescription;
-            helper.logging(AutoPayRequest.InstitutionCode, "APIPAYMENT_PAYMENTTELKOM", response);
+            helper.logging(AutoPayRequest.institutionCode, "APIPAYMENT_PAYMENTTELKOM", response);
 
             return AutoPayResponse;
         }

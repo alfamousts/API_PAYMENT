@@ -36,7 +36,7 @@ namespace API_PAYMENT.Models
 
         public static string ValidatePaymentCC(ref CreditCardModels.CreditCardPaymentRequest PayRequest, string feature)
         {
-            Boolean ceknoref = CreditCardHelper.CheckReferralNumberCreditCard(PayRequest.reference, PayRequest.instiutionCode);
+            Boolean ceknoref = CreditCardHelper.CheckReferenceCreditCard(PayRequest.reference, PayRequest.instiutionCode);
             decimal number;
             string rc = "";
             Helper helper = new Helper();
@@ -66,7 +66,7 @@ namespace API_PAYMENT.Models
                 }
                 else if (String.IsNullOrEmpty(PayRequest.reference))
                 {
-                    rc = "0014"; //Referral number tidak boleh kosong
+                    rc = "0014"; //Reference tidak boleh kosong
                 }
                 else if (!decimal.TryParse(PayRequest.amount.Replace(",", ""), out number))
                 {
@@ -83,7 +83,7 @@ namespace API_PAYMENT.Models
             }
             else
             {
-                rc = "0013"; //Nomor referral sudah pernah digunakan
+                rc = "0013"; //Reference sudah pernah digunakan
             }
 
             return rc;

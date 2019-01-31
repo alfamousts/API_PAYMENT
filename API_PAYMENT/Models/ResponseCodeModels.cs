@@ -30,9 +30,9 @@ namespace API_PAYMENT.Models
                 case "0009":
                     return "IP address not allowed";
                 case "0012":
-                    return "Referral number must not be empty";
+                    return "Reference must not be empty";
                 case "0013":
-                    return "Referral number is already used";
+                    return "Reference is already used";
 
                 case "0100":
                     return "Inquiry Success";
@@ -104,13 +104,21 @@ namespace API_PAYMENT.Models
                 case "0306":
                     return "Transaction timeout";
                 case "0307":
-                    return "Data not found";
+                    return "Invoice not found";
                 case "0308":
                     return "Duplicate transaction sequence";
                 case "0309":
                     return "Account is not active";
                 case "0310":
                     return "Passive account";
+                case "0311":
+                    return "Cardlink end of day";
+                case "0312":
+                    return "Invalid credit card number";
+                case "0313":
+                    return "BNI credit card is not registered";
+                case "0314":
+                    return "Invalid credit card format";
                 //Hanum, end response code PSW
 
                 default:
@@ -139,8 +147,10 @@ namespace API_PAYMENT.Models
                     return "0306"; //Transaksi Timeout (PSW)
                 case "68":
                     return "0306"; //Transaksi Timeout (3rd Party)
+                //Hanum, start abnormal case Telkom
                 case "88":
                     return "0307"; //Data Not Found
+                //Hanum, end
                 case "86":
                     return "0308"; //Duplicate Sequence Transaction (Brinets)
                 case "93":
@@ -149,6 +159,19 @@ namespace API_PAYMENT.Models
                     return "0309"; //Rekening Close
                 case "NH":
                     return "0310"; //Rekening Pasif
+
+                //Fikri, start abnormal case CC
+                //CC BRI
+                case "N1":
+                    return "0311"; //Cardlink end of day
+                case "N2":
+                    return "0312"; //Invalid credit card number
+                //CC Bank Lain
+                case "06":
+                    return "0313"; //BNI credit card is not registered
+                case "12":
+                    return "0314"; //Invalid credit card format
+                //Fikri, end
 
                 default:
                     return "";
