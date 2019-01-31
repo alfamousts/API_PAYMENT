@@ -61,16 +61,6 @@ namespace API_PAYMENT.Controllers
             return Ok(response);
         }
 
-        // PUT: api/CreditCard/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/CreditCard/5
-        public void Delete(int id)
-        {
-        }
-
         public IHttpActionResult Get(string cardNumber)
         {
             CreditCardModels.CreditCardInquiryRequest request = new CreditCardModels.CreditCardInquiryRequest();
