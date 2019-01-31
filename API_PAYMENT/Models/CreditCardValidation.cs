@@ -11,6 +11,7 @@ namespace API_PAYMENT.Models
         public static string ValidateInputInquiryCC(ref CreditCardModels.CreditCardInquiryRequest InqRequest, string feature)
         {
             string rc = "";
+            decimal number;
 
             Helper helper = new Helper();
             if (!helper.FeatureCheck(InqRequest.instiutionCode, feature))
@@ -20,6 +21,10 @@ namespace API_PAYMENT.Models
             else if (String.IsNullOrEmpty(InqRequest.cardNumber))
             {
                 rc = "0101";
+            }
+            else if (!decimal.TryParse(InqRequest.cardNumber, out number))
+            {
+                rc = "0104";
             }
             else
             {
@@ -46,6 +51,10 @@ namespace API_PAYMENT.Models
                 if (String.IsNullOrEmpty(PayRequest.cardNumber))
                 {
                     rc = "0110"; //Card number tidak boleh kosong
+                }
+                else if (!decimal.TryParse(PayRequest.cardNumber, out number))
+                {
+                    rc = "0104";
                 }
                 else if (String.IsNullOrEmpty(PayRequest.amount))
                 {

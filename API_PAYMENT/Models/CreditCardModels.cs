@@ -11,6 +11,7 @@ namespace API_PAYMENT.Models
     /// <summary>
     /// Credit card models.
     /// </summary>
+    #region CCmodel
     public class CreditCardModels
     {
         public CreditCardModels()
@@ -143,7 +144,7 @@ namespace API_PAYMENT.Models
         }
         //add Credit Card models request and response here
     }
-
+    #endregion
     /// <summary>
     /// Credit card helper.
     /// </summary>
@@ -165,33 +166,20 @@ namespace API_PAYMENT.Models
 
             switch (bankCode)
             {
-                case "BRI":
-                    pswReq.Key = ConstantModels.Key_CCBRI;
-                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-                    pswReq.SubProduct = ConstantModels.SubProductINQ;
-                    break;
-                case "BCA":
-                    pswReq.Key = ConstantModels.Key_CCBRI;
-                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-                    pswReq.SubProduct = ConstantModels.SubProductINQ;
-                    break;
-                case "BNI":
+                case "002":
                     pswReq.Key = ConstantModels.Key_CCBRI;
                     pswReq.ProductID = ConstantModels.ProductID_CCBRI;
                     pswReq.SubProduct = ConstantModels.SubProductINQ;
                     break;
                 default:
-                    pswReq.Key = "";
-                    pswReq.ProductID = "";
-                    pswReq.SubProduct = "";
+                    pswReq.Key = ConstantModels.Key_CCBRI;
+                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
+                    pswReq.SubProduct = ConstantModels.SubProductINQ;
                     break;
             }
 
 
             pswReq.InputData = requestInq.cardNumber;
-            pswReq.Key = ConstantModels.Key_CCBRI;
-            pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-            pswReq.SubProduct = ConstantModels.SubProductINQ;
             Random rand = new Random();
             pswReq.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + rand.Next(0,9).ToString(); //harusnya get ke DB
 
@@ -283,31 +271,18 @@ namespace API_PAYMENT.Models
             string bankCode = GetBinMap(requestPay.cardNumber.Substring(0, 6));
             switch (bankCode)
             {
-                case "BRI":
+                case "002":
                     pswReq.Key = ConstantModels.Key_CCBRI;
                     pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-                    pswReq.SubProduct = ConstantModels.SubProductINQ;
-                    break;
-                case "BCA":
-                    pswReq.Key = ConstantModels.Key_CCBRI;
-                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-                    pswReq.SubProduct = ConstantModels.SubProductINQ;
-                    break;
-                case "BNI":
-                    pswReq.Key = ConstantModels.Key_CCBRI;
-                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-                    pswReq.SubProduct = ConstantModels.SubProductINQ;
+                    pswReq.SubProduct = ConstantModels.SubProductPAY;
                     break;
                 default:
-                    pswReq.Key = "";
-                    pswReq.ProductID = "";
-                    pswReq.SubProduct = "";
+                    pswReq.Key = ConstantModels.Key_CCBRI;
+                    pswReq.ProductID = ConstantModels.ProductID_CCBRI;
+                    pswReq.SubProduct = ConstantModels.SubProductPAY;
                     break;
             }
             pswReq.InputData = requestPay.cardNumber;
-            pswReq.Key = ConstantModels.Key_CCBRI;
-            pswReq.ProductID = ConstantModels.ProductID_CCBRI;
-            pswReq.SubProduct = ConstantModels.SubProductPAY;
             Random rand = new Random();
             pswReq.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + rand.Next(0, 9).ToString(); //harusnya get ke DB
             pswReq.TotalAmount = requestPay.amount;
@@ -438,7 +413,7 @@ namespace API_PAYMENT.Models
             string minimum_pay;
             string billing;
             string maturity_date;
-            if (pswRes.Data1 != null)
+            if (pswRes.Data1 !=null && pswRes.Data1 != "")
             {
                 string pswresData = pswRes.Data1.Replace("||", "~");
                 string[] data = pswresData.Split('~');

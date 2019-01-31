@@ -55,17 +55,15 @@ namespace API_PAYMENT.Models
                 case "0104":
                     return "Card number must be a number";
                 case "0105":
-                    return "Total amount must not be empty";
+                    return "Total amount must be fillef";
                 case "0106":
-                    return "Card Name must not be empty";
-                case "0107":
-                    return "Billing code must not be empty";
+                    return "Card Name must be filled";
                 case "0108":
                     return "Total amount must be a number";
                 case "0109":
-                    return "Total amount must not be a negative number";
+                    return "Total amount must must be positive number";
                 case "0110":
-                    return "Card Number must not be empty";
+                    return "Card Number must be filled";
                 case "0111":
                     return "Source account has not been registered";
                 //Fikri, end response code TELKOM
