@@ -42,7 +42,9 @@ namespace API_PAYMENT.Filters
                 string method = actionContext.Request.Method.ToString();
                 string requestBody = new StreamReader(System.Web.HttpContext.Current.Request.InputStream).ReadToEnd();
 
-                helper.InsertActivityLog(institutionCode, institutionKey, urlHit, sourceIP, datetime, method, requestBody);
+                //Thread.Sleep(10000);
+                Task.Factory.StartNew(() => ActivityLog(institutionCode, institutionKey, urlHit, sourceIP, datetime, method, requestBody));
+                //helper.InsertActivityLog(institutionCode, institutionKey, urlHit, sourceIP, datetime, method, requestBody);
 
                 //Check Institution Credential
                 DataTable dtInst = helper.GetParameterInstitusiDT(institutionCode, "INSTITUTION_SHORTNAME, INSTITUTION_KEY");
@@ -68,7 +70,7 @@ namespace API_PAYMENT.Filters
                         response = new CredentialModels("0009");
                         //response.responseDescription = IPStr;
                     }
-                    else if(institutionCode == "")
+                    else if (institutionCode == "")
                     {
                         response = new CredentialModels("0006");
                     }
@@ -98,6 +100,15 @@ namespace API_PAYMENT.Filters
             }
 
             HandleUnathorized(actionContext);
+        }
+
+        private static async Task<string> ActivityLog(string institutionCode, string institutionKey, string urlHit,
+            string sourceIP, string datetime, string method, string requestBody)
+        {
+            Helper helper = new Helper();
+            //Thread.Sleep(600000);
+            helper.InsertActivityLog(institutionCode, institutionKey, urlHit, sourceIP, datetime, method, requestBody);
+            return "OK";
         }
 
         private static void HandleUnathorized(HttpActionContext actionContext)

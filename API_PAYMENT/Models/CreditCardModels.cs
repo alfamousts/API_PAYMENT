@@ -464,7 +464,7 @@ namespace API_PAYMENT.Models
             util.cmdSQLScalar(sql);
         }
 
-        public static Boolean CheckReferralNumberCreditCard(string noref, string kodeInst)
+        public static Boolean CheckReferenceCreditCard(string noref, string kodeInst)
         {
             Boolean result;
             Util util = new Util();
