@@ -390,7 +390,8 @@ namespace API_PAYMENT.Models
                                 requestParam.ChannelID + "\",\"ProductID\":\"" + requestParam.ProductID + "\",\"SubProduct\":\"" + requestParam.SubProduct + "\",\"SequenceTrx\"" +
                                 ":\"" + requestParam.SequenceTransaction + "\",\"TotalAmount\":\"" + requestParam.TotalAmount + "\",\"AddAmount1\":\"" + requestParam.FirstBill + 
                                 "\",\"AddAmount2\":\"" + requestParam.SecondBill + "\",\"AddAmount3\":\"" + requestParam.ThirdBill + "\",\"InputData\":\"" + requestParam.BillingNumber + 
-                                "\",\"Data1\":\"" + requestParam.Name + "\",\"Data2\":\"" + requestParam.BillingCode + "\",\"Key\":\"" + requestParam.Key + "\"}]";
+                                "\",\"Data1\":\"" + requestParam.SourceAccount + "\",\"Data2\":\"" + requestParam.Name + "\",\"Data3\":\"" + requestParam.BillingCode +
+                                "\",\"Key\":\"" + requestParam.Key + "\"}]";
             string requestInq = "data=" + _requestInq;
 
             ASCIIEncoding ascii = new ASCIIEncoding();
