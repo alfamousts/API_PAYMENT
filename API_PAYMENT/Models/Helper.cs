@@ -109,14 +109,34 @@ namespace API_PAYMENT.Models
 
         public string Base64Encode(string plainText)
         {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
+            string result = "";
+            try
+            {
+                var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+                result = System.Convert.ToBase64String(plainTextBytes);
+            }
+            catch (Exception ex)
+            {
+                result = "";
+            }
+
+            return result;
         }
 
         public string Base64Decode(string base64EncodedData)
         {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            string result = "";
+            try
+            {
+                var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+                result = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            }
+            catch (Exception ex)
+            {
+                result = "";
+            }
+
+            return result;
         }
 
         public void logging(string instFolder, string filename, string data)

@@ -462,6 +462,7 @@ namespace API_PAYMENT.Models
         public TelkomModels.TelkomPaymentResponse PaymentTelkom(ref TelkomModels.TelkomPaymentRequest AutoPayRequest, string ip)
         {
             string wsStartTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
+            string wsEndTime = "";
 
             TelkomHelper telkomHelper = new TelkomHelper();
             TelkomModels.PSWServiceRequest PswRequest = new TelkomModels.PSWServiceRequest();
@@ -469,42 +470,51 @@ namespace API_PAYMENT.Models
             TelkomModels.PSWServicePaymentResponse GetPayResponse = new TelkomModels.PSWServicePaymentResponse();
 
             string decodeBillingCode = helper.Base64Decode(AutoPayRequest.billingCode);
-            string[] splitBillingCode = decodeBillingCode.Split('~');
-            string[] splitData1PSW = ((splitBillingCode[0]).Replace("||", "~")).Split('~');
 
-            Random random = new Random();
-            PswRequest.SubProduct = ConstantModels.SubProductPAY_Telkom;
-            PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
-            PswRequest.TotalAmount = AutoPayRequest.totalAmount;
-            PswRequest.AddAmount1 = splitData1PSW[1];
-            PswRequest.AddAmount2 = splitData1PSW[2];
-            PswRequest.AddAmount3 = splitData1PSW[3];
-            PswRequest.InputData = AutoPayRequest.billingNumber;
-            PswRequest.Data1 = helper.GetSourceAccount(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
-            PswRequest.Data2 = splitData1PSW[0];
-            PswRequest.Data3 = splitBillingCode[1];
-
-            GetPayResponse = PSWServicePaymentTelkom(ref PswRequest);
-            string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
-
-            if (GetPayResponse == null)
+            if (decodeBillingCode == "")
             {
-                AutoPayResponse.responseCode = ConstantModels.TIMEOUTCODEPAY;
-                AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.TIMEOUTCODEPAY);
-            }
-
-            if (GetPayResponse.RC == "00") //success
-            {
-                AutoPayResponse.responseCode = ConstantModels.SUCCESSCODEPAY;
-                AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEPAY);
-                AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
-                AutoPayResponse.data.reference = AutoPayRequest.reference;
-                AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
-            }
-            else //fail
-            {
-                AutoPayResponse.responseCode = ResponseCodeModels.GetResponseCodePSW(GetPayResponse.RC);
+                AutoPayResponse.responseCode = "0210";
                 AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
+            }
+            else
+            {
+                string[] splitBillingCode = decodeBillingCode.Split('~');
+                string[] splitData1PSW = ((splitBillingCode[0]).Replace("||", "~")).Split('~');
+
+                Random random = new Random();
+                PswRequest.SubProduct = ConstantModels.SubProductPAY_Telkom;
+                PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
+                PswRequest.TotalAmount = AutoPayRequest.totalAmount;
+                PswRequest.AddAmount1 = splitData1PSW[1];
+                PswRequest.AddAmount2 = splitData1PSW[2];
+                PswRequest.AddAmount3 = splitData1PSW[3];
+                PswRequest.InputData = AutoPayRequest.billingNumber;
+                PswRequest.Data1 = helper.GetSourceAccount(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
+                PswRequest.Data2 = splitData1PSW[0];
+                PswRequest.Data3 = splitBillingCode[1];
+
+                GetPayResponse = PSWServicePaymentTelkom(ref PswRequest);
+                wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
+
+                if (GetPayResponse == null)
+                {
+                    AutoPayResponse.responseCode = ConstantModels.TIMEOUTCODEPAY;
+                    AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.TIMEOUTCODEPAY);
+                }
+
+                if (GetPayResponse.RC == "00") //success
+                {
+                    AutoPayResponse.responseCode = ConstantModels.SUCCESSCODEPAY;
+                    AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEPAY);
+                    AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
+                    AutoPayResponse.data.reference = AutoPayRequest.reference;
+                    AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
+                }
+                else //fail
+                {
+                    AutoPayResponse.responseCode = ResponseCodeModels.GetResponseCodePSW(GetPayResponse.RC);
+                    AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
+                }
             }
 
             //insert ke tabel TELKOMTRANSACTION
