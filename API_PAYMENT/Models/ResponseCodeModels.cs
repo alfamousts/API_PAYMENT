@@ -65,6 +65,8 @@ namespace API_PAYMENT.Models
                     return "Card Number must be filled";
                 case "0111":
                     return "Source account has not been registered, please contact the administrator";
+                case "0112":
+                    return "Data key incorrect";
                 //Fikri, end response code TELKOM
 
                 //Hanum, start response code TELKOM
@@ -81,7 +83,7 @@ namespace API_PAYMENT.Models
                 case "0209":
                     return "Billing number must not be empty";
                 case "0210":
-                    return "Source account has not been registered";
+                    return "Billing code incorrect";
                 //Hanum, end response code TELKOM
 
                 //Hanum, start response code PSW
