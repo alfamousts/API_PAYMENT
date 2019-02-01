@@ -47,7 +47,7 @@ namespace API_PAYMENT.Models
             }
             else if (!ceknoref)
             {
-                if (String.IsNullOrEmpty(helper.GetSourceAccount(PayRequest.instiutionCode, ConstantModels.FeatureCode_Telkom)))
+                if (String.IsNullOrEmpty(helper.GetSourceAccount(PayRequest.instiutionCode, ConstantModels.FeatureCode_CC)))
                 {
                     rc = "0111";
                 }
