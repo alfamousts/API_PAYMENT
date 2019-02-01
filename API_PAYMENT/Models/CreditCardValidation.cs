@@ -47,8 +47,11 @@ namespace API_PAYMENT.Models
             }
             else if (!ceknoref)
             {
-                //if (String.IsNullOrEmpty(PayRequest.Amount) || String.IsNullOrEmpty(PayRequest.beneficiaryAccount) || String.IsNullOrEmpty(PayRequest.bankCode) || String.IsNullOrEmpty(PayRequest.beneficiaryAccountName) || String.IsNullOrEmpty(PayRequest.sourceAccount) || String.IsNullOrEmpty(PayRequest.noReferral))
-                if (String.IsNullOrEmpty(PayRequest.cardNumber))
+                if (String.IsNullOrEmpty(helper.GetSourceAccount(PayRequest.instiutionCode, ConstantModels.FeatureCode_Telkom)))
+                {
+                    rc = "0111";
+                }
+                else if (String.IsNullOrEmpty(PayRequest.cardNumber))
                 {
                     rc = "0110"; //Card number tidak boleh kosong
                 }

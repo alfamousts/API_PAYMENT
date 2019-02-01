@@ -15,12 +15,11 @@ namespace API_PAYMENT.Models
 
         private static Object streamLocker = new Object();
         private masiril.kasihmas hajar = new masiril.kasihmas();
+        Util util = new Util();
 
         public Boolean CheckIP(string ip, string kodeInst)
         {
             Boolean result;
-            Util util = new Util();
-            //util.ConnectToApplicationDbase();
             string sql;
 
             sql = "SELECT 1 FROM IPMAP with (nolock) WHERE IP_ADDRESS='" + ip + "' AND INSTITUTION_CODE = '" + kodeInst + "'";
@@ -40,9 +39,6 @@ namespace API_PAYMENT.Models
 
         public DataTable GetParameterInstitusiDT(string kodeInst, string paramName)
         {
-            Util util = new Util();
-            //util.ConnectToApplicationDbase();
-
             string sql;
 
             sql = "SELECT " + paramName + " FROM INSTITUTION with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "'";
@@ -54,7 +50,6 @@ namespace API_PAYMENT.Models
         public Boolean FeatureCheck(string institutionCode, string featureCode)
         {
             Boolean result;
-            Util util = new Util();
             string sql;
 
             sql = "SELECT * FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE = '" + institutionCode + "' AND FEATURE_CODE = '" + featureCode + "'";
@@ -72,10 +67,28 @@ namespace API_PAYMENT.Models
             }
         }
 
+        public string GetSourceAccount(string institutionCode, string featureCode)
+        {
+            string result;
+            string sql;
+
+            sql = "SELECT TOP(1) SOURCE_ACCOUNT FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE='" + institutionCode + "' AND FEATURE_CODE = '" + featureCode + "'";
+            DataTable dt = util.setDataTable(sql);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                result = (String.IsNullOrEmpty(dt.Rows[0]["SOURCE_ACCOUNT"].ToString().Trim()) ? "" : (dt.Rows[0]["SOURCE_ACCOUNT"].ToString().Trim()).PadLeft(15, '0'));
+                return result;
+            }
+            else
+            {
+                result = "";
+                return result;
+            }
+        }
+
         public void InsertActivityLog(string institutionCode, string institutionKey, string urlHit, string IP, string datetime, string method, string request)
         {
-            Util util = new Util();
-
             string sql = "INSERT INTO ACTIVITYLOG ([INSTITUTION_CODE],[INSTITUTION_KEY],[URL_HIT],[IP],[DATETIME],[METHOD],[REQUEST]) " +
                   "VALUES ('" + institutionCode + "', '" + institutionKey + "', '" + urlHit + "', " + "'" + IP + "', '" + datetime + "', '" 
                   + method + "', '" + (request.Replace("\n","")).Replace("\t","").ToString() + "')";

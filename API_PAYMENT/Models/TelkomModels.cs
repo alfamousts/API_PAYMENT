@@ -238,26 +238,6 @@ namespace API_PAYMENT.Models
             util.cmdSQLScalar(sql);
         }
 
-        public string GetSourceAccountTelkom(string institutionCode, string featureCode)
-        {
-            string result;
-            string sql;
-
-            sql = "SELECT TOP(1) SOURCE_ACCOUNT FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE='" + institutionCode + "' AND FEATURE_CODE = '" + featureCode + "'";
-            DataTable dt = util.setDataTable(sql);
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                result = dt.Rows[0]["SOURCE_ACCOUNT"].ToString().Trim();
-                return result.PadLeft(15, '0');
-            }
-            else
-            {
-                result = "";
-                return result;
-            }
-        }
-
         #region INQUIRY TELKOM
         public TelkomModels.PSWServiceInquiryResponse PSWServiceInquiryTelkom(ref TelkomModels.PSWServiceRequest requestParam)
         {
@@ -328,7 +308,7 @@ namespace API_PAYMENT.Models
             PswRequest.SubProduct = ConstantModels.SubProductINQ_Telkom;
             PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
             PswRequest.InputData = AutoInqRequest.billingNumber;
-            PswRequest.Data1 = telkomHelper.GetSourceAccountTelkom(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
+            PswRequest.Data1 = helper.GetSourceAccount(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
 
             GetInqResponse = PSWServiceInquiryTelkom(ref PswRequest);
 
@@ -347,7 +327,7 @@ namespace API_PAYMENT.Models
 
                 AutoInqResponse.responseCode = ConstantModels.SUCCESSCODEINQ;
                 AutoInqResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEINQ);
-                AutoInqResponse.data.name = splitData1[0].ToString();
+                AutoInqResponse.data.name = splitData1[0].ToString().Trim();
                 AutoInqResponse.data.billingCode = helper.Base64Encode(GetInqResponse.Data1 + "~" + GetInqResponse.Data2);
 
                 for (int i = 1; i <= countData1; i++)
@@ -458,7 +438,7 @@ namespace API_PAYMENT.Models
             PswRequest.AddAmount2 = splitData1PSW[2];
             PswRequest.AddAmount3 = splitData1PSW[3];
             PswRequest.InputData = AutoPayRequest.billingNumber;
-            PswRequest.Data1 = telkomHelper.GetSourceAccountTelkom(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);;
+            PswRequest.Data1 = helper.GetSourceAccount(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);
             PswRequest.Data2 = splitData1PSW[0];
             PswRequest.Data3 = splitBillingCode[1];
 

@@ -264,6 +264,7 @@ namespace API_PAYMENT.Models
 
         public static CreditCardModels.CreditCardPaymentRespone PaymentCC(ref CreditCardModels.CreditCardPaymentRequest requestPay, string featureCode)
         {
+            Helper helper = new Helper();
             string url = ConstantModels.URLINQPAY;
             CreditCardModels.PSWRequest pswReq = new CreditCardModels.PSWRequest();
             CreditCardModels.CreditCardPaymentRespone responsePay = new CreditCardModels.CreditCardPaymentRespone();
@@ -286,7 +287,7 @@ namespace API_PAYMENT.Models
             Random rand = new Random();
             pswReq.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + rand.Next(0, 9).ToString(); //harusnya get ke DB
             pswReq.TotalAmount = requestPay.amount;
-            pswReq.Data1 = GetSourceAccount(requestPay.instiutionCode,featureCode); //helper.getrekdb();
+            pswReq.Data1 = helper.GetSourceAccount(requestPay.instiutionCode,featureCode); //helper.getrekdb();
             pswReq.Data2 = requestPay.cardName;
 
      
@@ -366,28 +367,6 @@ namespace API_PAYMENT.Models
             InsertTransactionCC(requestPay, responsePay, pswReq, pswRes, wsStartTime, wsEndTime, System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"].ToString());
             return responsePay;
 
-        }
-
-        public static string GetSourceAccount(string kodeInst, string featureCode)
-        {
-            Util util = new Util();
-            //util.ConnectToApplicationDbase();
-            string acct;
-            string sql;
-            
-            sql = "SELECT * FROM FEATUREMAP with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "' and FEATURE_CODE = '"+ featureCode +"'";
-            DataTable dt = util.setDataTable(sql);
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                acct = dt.Rows[0]["SOURCE_ACCOUNT"].ToString().Trim();
-                return acct.PadLeft(15, '0');
-            }
-            else
-            {
-                acct = "";
-                return acct;
-            }
         }
 
         public static string GetBinMap(string bincode)

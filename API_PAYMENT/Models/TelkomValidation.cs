@@ -17,7 +17,11 @@ namespace API_PAYMENT.Models
 
             if (helper.FeatureCheck(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom))
             {
-                if (String.IsNullOrEmpty(AutoInqRequest.billingNumber))
+                if (String.IsNullOrEmpty(helper.GetSourceAccount(AutoInqRequest.institutionCode, ConstantModels.FeatureCode_Telkom)))
+                {
+                    rc = "0111";
+                }
+                else if (String.IsNullOrEmpty(AutoInqRequest.billingNumber))
                 {
                     rc = "0210";
                 }
@@ -48,7 +52,11 @@ namespace API_PAYMENT.Models
             {
                 if (!ceknoref)
                 {
-                    if (String.IsNullOrEmpty(PayRequest.totalAmount))
+                    if (String.IsNullOrEmpty(helper.GetSourceAccount(PayRequest.institutionCode, ConstantModels.FeatureCode_Telkom)))
+                    {
+                        rc = "0111";
+                    }
+                    else if (String.IsNullOrEmpty(PayRequest.totalAmount))
                     {
                         rc = "0205"; //Total amount tidak boleh kosong
                     }
