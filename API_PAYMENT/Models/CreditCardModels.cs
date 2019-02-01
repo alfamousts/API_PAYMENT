@@ -381,7 +381,16 @@ namespace API_PAYMENT.Models
                     pswReq.ProductID = ConstantModels.ProductID_CCOTHER;
                     pswReq.SubProduct = ConstantModels.SubProductPAYOther;
                     pswReq.Data2 = requestPay.cardName;
-                    pswReq.Data2 = Base64Decode(requestPay.dataKey);
+                    try
+                    {
+                        pswReq.Data2 = Base64Decode(requestPay.dataKey);
+                    }
+                    catch
+                    {
+                        responsePay.responseCode = "0112";
+                        responsePay.responseDescription = ResponseCodeModels.GetResponseDescription(responsePay.responseCode);
+                        return responsePay;
+                    }
                     break;
             }
             pswReq.InputData = requestPay.cardNumber;

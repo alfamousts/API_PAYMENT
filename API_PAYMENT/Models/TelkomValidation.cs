@@ -23,7 +23,7 @@ namespace API_PAYMENT.Models
                 }
                 else if (String.IsNullOrEmpty(AutoInqRequest.billingNumber))
                 {
-                    rc = "0210";
+                    rc = "0209";
                 }
                 else if (!decimal.TryParse(AutoInqRequest.billingNumber, out number))
                 {
