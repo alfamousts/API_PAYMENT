@@ -498,24 +498,13 @@ namespace API_PAYMENT.Models
             Util util = new Util();
             string BANK_CODE = "";
 
-<<<<<<< HEAD
-            sql = "SELECT * FROM BINMAP with (nolock) WHERE BIN_CODE = '" + bincode + "'";
+            string sql = "SELECT * FROM BINMAP with (nolock) WHERE BIN_CODE = '" + bincode + "'";
             DataTable dt = util.setDataTable(sql);
             if (dt.Rows.Count > 0)
                 return dt;
             //BANK_CODE = dt.Rows[0]["BANK_CODE"].ToString();
             else
                 return null;
-=======
-            SqlCommand sqlCommand = new SqlCommand("SELECT * FROM BINMAP with (nolock) WHERE BIN_CODE = @bincode");
-            sqlCommand.Parameters.Add("@bincode", SqlDbType.VarChar).Value = bincode;
-            DataTable dt = util.setDataTable(sqlCommand);
-
-            if (dt.Rows.Count > 0)
-            BANK_CODE = dt.Rows[0]["BANK_CODE"].ToString();
-
-            return BANK_CODE;
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
         }
 
         public static void InsertLogInquiryCC(CreditCardModels.CreditCardInquiryRequest InqRequest, CreditCardModels.CreditCardInquiryRespone InqResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServiceInqResponse pswRes, string wsStartTime, string wsEndTime, string ip)
@@ -543,18 +532,11 @@ namespace API_PAYMENT.Models
             }
             string errMsg = "";
 
-<<<<<<< HEAD
-
-            sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
+            string sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
                   "[SUB_PRODUCT],[SEQUENCE_TRX],[CC_NUM],[KEY],[NAME],[BANK],[BILLING],[MINIMUM_PAYMENT],[MATURITY_DATE],[RC],[RC_DESC],[ERRMSG],[IP_ADDRESS]) " +
                   "VALUES (@createdTime, @wsStartTime, @wsEndTime, @action, @institutionCode, @channelId, @productId, @subProduct, @sequenceTrx, @ccNumber, " +
                   "@key, @name, @bank, @billing, @minimumPayment, @maturityDate, @rc, @rcDesc, @errmsg, @ip)";
-=======
-            string sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
-                  "[SUB_PRODUCT],[SEQUENCE_TRX],[CC_NUM],[KEY],[NAME],[BILLING],[MINIMUM_PAYMENT],[MATURITY_DATE],[RC],[RC_DESC],[ERRMSG],[IP_ADDRESS]) " +
-                  "VALUES (@createdTime, @wsStartTime, @wsEndTime, @action, @institutionCode, @channelId, @productId, @subProduct, @sequenceTrx, @ccNumber," +
-                  "@key, @name, @billing, @minimumPayment, @maturityDate, @rc, @rcDesc, @errmsg, @ip)";
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
+
 
             SqlCommand sqlCommand = new SqlCommand();
             sqlCommand.CommandType = CommandType.Text;
@@ -571,10 +553,7 @@ namespace API_PAYMENT.Models
             sqlCommand.Parameters.Add("@ccNumber", SqlDbType.VarChar).Value = pswReq.InputData;
             sqlCommand.Parameters.Add("@key", SqlDbType.VarChar).Value = pswReq.Key;
             sqlCommand.Parameters.Add("@name", SqlDbType.VarChar).Value = name;
-<<<<<<< HEAD
             sqlCommand.Parameters.Add("@bank", SqlDbType.VarChar).Value = "BRI";
-=======
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
             sqlCommand.Parameters.Add("@billing", SqlDbType.VarChar).Value = billing;
             sqlCommand.Parameters.Add("@minimumPayment", SqlDbType.VarChar).Value = minimum_pay;
             sqlCommand.Parameters.Add("@maturityDate", SqlDbType.VarChar).Value = maturity_date;
@@ -583,10 +562,6 @@ namespace API_PAYMENT.Models
             sqlCommand.Parameters.Add("@errmsg", SqlDbType.VarChar).Value = errMsg;
             sqlCommand.Parameters.Add("@ip", SqlDbType.VarChar).Value = ip;
             util.ExecuteSqlCommand(sqlCommand);
-<<<<<<< HEAD
-            //util.cmdSQLScalar(sql);
-=======
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
         }
 
         public static void InsertLogInquiryCCOther(CreditCardModels.CreditCardInquiryRequest InqRequest, CreditCardModels.CreditCardInquiryRespone InqResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServiceInqCCOtherResponse pswResOther, string wsStartTime, string wsEndTime, string ip)
@@ -628,9 +603,9 @@ namespace API_PAYMENT.Models
             }
             string errMsg = "";
 
-<<<<<<< HEAD
 
-            sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
+
+            string sql = "INSERT INTO CCINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[CHANNEL_ID],[PRODUCT_ID]," +
                   "[SUB_PRODUCT],[SEQUENCE_TRX],[CC_NUM],[KEY],[NAME],[BANK],[BILLING],[MINIMUM_PAYMENT],[MATURITY_DATE],[RC],[RC_DESC],[ERRMSG],[OTHER_DATA],[IP_ADDRESS]) " +
                   "VALUES (@createdTime, @wsStartTime, @wsEndTime, @action, @institutionCode, @channelId, @productId, @subProduct, @sequenceTrx, @ccNumber," +
                   "@key, @name, @bank, @billing, @minimumPayment, @maturityDate, @rc, @rcDesc, @errmsg, @otherData, @ip)";
@@ -665,21 +640,14 @@ namespace API_PAYMENT.Models
         public static void InsertTransactionCC(CreditCardModels.CreditCardPaymentRequest PayRequest, CreditCardModels.CreditCardPaymentRespone PayResponse, CreditCardModels.PSWRequest pswReq, CreditCardModels.PSWServicePayResponse pswRes, string wsStartTime, string wsEndTime, string ip, string bankName)
         {
             Util util = new Util();
-            string sql;
 
             string errMsg = "";
 
 
-            sql = "INSERT INTO CCTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[CC_TYPE],[SEQUENCE_TRX],[TOTAL_AMOUNT]," +
+            string sql = "INSERT INTO CCTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[CC_TYPE],[SEQUENCE_TRX],[TOTAL_AMOUNT]," +
                  "[CARD_NUMBER],[NAMA],[BANK],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC],[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF])" +
                   "VALUES (@createdTime, @wsStartTime, @wsEndTime, @institutionCode, @ccType, @sequenceTrx, @totalAmount," +
                  "@cardNumber, @nama, @bank, @transactionDate, @transactionTime, @rc, @rcDesc, @errmsg, @jurnalSeq, @ip, @nomorReff)";
-=======
-            string sql = "INSERT INTO CCTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[CC_TYPE],[SEQUENCE_TRX],[TOTAL_AMOUNT]," +
-                 "[CARD_NUMBER],[NAMA],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC],[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF])" +
-                 "VALUES (@createdTime, @wsStartTime, @wsEndTime, @institutionCode, @ccType, @sequenceTrx, @totalAmount," +
-                 "@cardNumber, @nama, @transactionDate, @transactionTime, @rc, @rcDesc, @errmsg, @jurnalSeq, @ip, @nomorReff)";
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
 
             SqlCommand sqlCommand = new SqlCommand();
             sqlCommand.CommandType = CommandType.Text;
@@ -692,12 +660,8 @@ namespace API_PAYMENT.Models
             sqlCommand.Parameters.Add("@sequenceTrx", SqlDbType.VarChar).Value = pswReq.SequenceTrx;
             sqlCommand.Parameters.Add("@totalAmount", SqlDbType.Decimal).Value = Convert.ToDecimal(PayRequest.amount);
             sqlCommand.Parameters.Add("@cardNumber", SqlDbType.VarChar).Value = PayRequest.cardNumber;
-<<<<<<< HEAD
             sqlCommand.Parameters.Add("@nama", SqlDbType.VarChar).Value = PayRequest.cardName;
             sqlCommand.Parameters.Add("@bank", SqlDbType.VarChar).Value = bankName;
-=======
-            sqlCommand.Parameters.Add("@nama", SqlDbType.VarChar).Value = PayRequest.cardNumber;
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
             sqlCommand.Parameters.Add("@transactionDate", SqlDbType.VarChar).Value = DateTime.Now.ToShortDateString();
             sqlCommand.Parameters.Add("@transactionTime", SqlDbType.VarChar).Value = DateTime.Now.ToShortTimeString();
             sqlCommand.Parameters.Add("@rc", SqlDbType.VarChar).Value = PayResponse.responseCode;
@@ -707,10 +671,6 @@ namespace API_PAYMENT.Models
             sqlCommand.Parameters.Add("@ip", SqlDbType.VarChar).Value = ip;
             sqlCommand.Parameters.Add("@nomorReff", SqlDbType.VarChar).Value = PayRequest.reference;
             util.ExecuteSqlCommand(sqlCommand);
-<<<<<<< HEAD
-            //util.cmdSQLScalar(sql);
-=======
->>>>>>> b185629960b2551c1719c4c0246beb032349893a
         }
 
         public static Boolean CheckReferenceCreditCard(string noref, string kodeInst)
