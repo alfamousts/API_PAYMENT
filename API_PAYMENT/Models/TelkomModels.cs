@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -179,10 +180,11 @@ namespace API_PAYMENT.Models
         public Boolean CheckReferenceTelkom(string noref, string kodeInst)
         {
             Boolean result;
-            string sql;
 
-            sql = "SELECT * FROM TELKOMTRANSACTION WITH (NOLOCK) WHERE NOMOR_REFF='" + noref + "' AND RC = '0200' AND INSTITUTION_CODE = '" + kodeInst + "'";
-            DataTable dt = util.setDataTable(sql);
+            SqlCommand sqlCommand = new SqlCommand("SELECT * FROM TELKOMTRANSACTION WITH (NOLOCK) WHERE NOMOR_REFF = @noref AND RC = '0200' AND INSTITUTION_CODE = @institutionCode");
+            sqlCommand.Parameters.Add("@noref", SqlDbType.VarChar).Value = noref;
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = kodeInst;
+            DataTable dt = util.setDataTable(sqlCommand);
 
             if (dt.Rows.Count > 0)
             {
@@ -198,27 +200,43 @@ namespace API_PAYMENT.Models
 
         public void InsertLogInquiryTelkom(TelkomModels.TelkomInquiryRequest InqRequest, TelkomModels.PSWServiceRequest PswRequest, TelkomModels.TelkomInquiryResponse InqResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
         {
-            string sql;
             string errMsg = "";
             if (InqResponse.responseCode != "0100")
             {
                 errMsg = "";
             }
 
-            sql = "INSERT INTO TELKOMINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[TRANSACTION_DATE],[TRANSACTION_TIME]" +
+            string sql = "INSERT INTO TELKOMINQUIRYLOG ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[ACTION],[INSTITUTION_CODE],[TRANSACTION_DATE],[TRANSACTION_TIME]" +
                 ",[CHANNEL_ID],[PRODUCT_ID],[SUB_PRODUCT],[SEQUENCE_TRX],[BILLING_NUMBER],[SOURCE_ACCOUNT],[KEY],[RC],[RC_DESC],[ERRMSG],[IP_ADDRESS]) " +
-                  "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "', '" + wsStartTime + "', '" + wsEndTime + "', 'INQUIRY'," +
-                  "'" + InqRequest.institutionCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PswRequest.ChannelID +
-                  "','" + PswRequest.ProductID + "', '" + PswRequest.SubProduct + "', '" + PswRequest.SequenceTrx + "', '" + InqRequest.billingNumber +
-                  "', '" + PswRequest.Data1 + "', '" + PswRequest.Key + "', '" + InqResponse.responseCode + "','" + InqResponse.responseDescription +
-                  "','" + errMsg + "','" + ip + "')";
+                  "VALUES (@createdTime, @wsStartTime, @wsEndTime, @action, @institutionCode, @transactionDate, @transactionTime, @channelId, @productId, @subProduct, " +
+                  "@sequenceTrx, @billingNumber, @sourceAccount, @key, @rc, @rcDesc, @errmsg, @ip)";
 
-            util.cmdSQLScalar(sql);
+            SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.CommandType = CommandType.Text;
+            sqlCommand.CommandText = sql;
+            sqlCommand.Parameters.Add("@createdTime", SqlDbType.VarChar).Value = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
+            sqlCommand.Parameters.Add("@wsStartTime", SqlDbType.VarChar).Value = wsStartTime;
+            sqlCommand.Parameters.Add("@wsEndTime", SqlDbType.VarChar).Value = wsEndTime;
+            sqlCommand.Parameters.Add("@action", SqlDbType.VarChar).Value = "INQUIRY_TELKOM";
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = InqRequest.institutionCode;
+            sqlCommand.Parameters.Add("@transactionDate", SqlDbType.VarChar).Value = PswRequest.Transdate;
+            sqlCommand.Parameters.Add("@transactionTime", SqlDbType.VarChar).Value = PswRequest.Transtime;
+            sqlCommand.Parameters.Add("@channelId", SqlDbType.VarChar).Value = PswRequest.ChannelID;
+            sqlCommand.Parameters.Add("@productId", SqlDbType.VarChar).Value = PswRequest.ProductID;
+            sqlCommand.Parameters.Add("@subProduct", SqlDbType.VarChar).Value = PswRequest.SubProduct;
+            sqlCommand.Parameters.Add("@sequenceTrx", SqlDbType.VarChar).Value = PswRequest.SequenceTrx;
+            sqlCommand.Parameters.Add("@billingNumber", SqlDbType.VarChar).Value = InqRequest.billingNumber;
+            sqlCommand.Parameters.Add("@sourceAccount", SqlDbType.VarChar).Value = PswRequest.Data1;
+            sqlCommand.Parameters.Add("@key", SqlDbType.VarChar).Value = PswRequest.Key;
+            sqlCommand.Parameters.Add("@rc", SqlDbType.VarChar).Value = InqResponse.responseCode;
+            sqlCommand.Parameters.Add("@rcDesc", SqlDbType.VarChar).Value = InqResponse.responseDescription;
+            sqlCommand.Parameters.Add("@errmsg", SqlDbType.VarChar).Value = errMsg;
+            sqlCommand.Parameters.Add("@ip", SqlDbType.VarChar).Value = ip;
+            util.ExecuteSqlCommand(sqlCommand);
         }
 
         public void InsertTelkomTransaction(TelkomModels.TelkomPaymentRequest PayRequest, TelkomModels.PSWServiceRequest PswRequest, TelkomModels.TelkomPaymentResponse PayResponse, string wsStartTime, string wsEndTime, string ip, string rc_psw)
         {
-            string sql;
             //string transDate = DateTime.Parse(PayRequest.TransactionDate).ToString("dd-MM-yyyy");
             string errorMsg = "";
             if (PayResponse.responseCode != "0200")
@@ -226,16 +244,39 @@ namespace API_PAYMENT.Models
                 errorMsg = "";
             }
 
-            sql = "INSERT INTO TELKOMTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[SEQUENCE_TRX],[TOTAL_AMOUNT],[FIRST_BILL]" +
+            string sql = "INSERT INTO TELKOMTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[SEQUENCE_TRX],[TOTAL_AMOUNT],[FIRST_BILL]" +
                 ",[SECOND_BILL],[THIRD_BILL],[BILLING_NUMBER],[SOURCE_ACCOUNT],[NAME],[BILLING_CODE],[ENCODE_DATA],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC]" +
                 ",[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF]) " +
-                  "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "','" + wsStartTime + "', '" + wsEndTime + "', '" + PayRequest.institutionCode + 
-                  "', '" + PswRequest.SequenceTrx + "', '" + PayRequest.totalAmount + "', '" + PswRequest.AddAmount1 + "','" + PswRequest.AddAmount2 + 
-                  "', '" + PswRequest.AddAmount3 + "', '" + PayRequest.billingNumber + "','" + PswRequest.Data1 + "', '" + PswRequest.Data2 + 
-                  "', '" + PswRequest.Data3 + "', '" + PayRequest.billingCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PayResponse.responseCode + 
-                  "', '" + PayResponse.responseDescription + "', '" + errorMsg + "','" + PayResponse.data.journalSeq + "', '" + ip + "', '" + PayRequest.reference + "')";
+                "VALUES (@createdTime, @wsStartTime, @wsEndTime, @institutionCode, @sequenceTrx, @totalAmount, @firstBill, @secondBill, @thirdBill, " +
+                "@billingNumber, @sourceAccount, @name, @billingCode, @encodeData, @transactionDate, @transactionTime, @rc, @rcDesc, @errmsg, @jurnalSeq," +
+                "@ip, @nomorReff)";
 
-            util.cmdSQLScalar(sql);
+            SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.CommandType = CommandType.Text;
+            sqlCommand.CommandText = sql;
+            sqlCommand.Parameters.Add("@createdTime", SqlDbType.VarChar).Value = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
+            sqlCommand.Parameters.Add("@wsStartTime", SqlDbType.VarChar).Value = wsStartTime;
+            sqlCommand.Parameters.Add("@wsEndTime", SqlDbType.VarChar).Value = wsEndTime;
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = PayRequest.institutionCode;
+            sqlCommand.Parameters.Add("@sequenceTrx", SqlDbType.VarChar).Value = PswRequest.SequenceTrx;
+            sqlCommand.Parameters.Add("@totalAmount", SqlDbType.Decimal).Value = Convert.ToDecimal(PayRequest.totalAmount);
+            sqlCommand.Parameters.Add("@firstBill", SqlDbType.VarChar).Value = PswRequest.AddAmount1;
+            sqlCommand.Parameters.Add("@secondBill", SqlDbType.VarChar).Value = PswRequest.AddAmount2;
+            sqlCommand.Parameters.Add("@thirdBill", SqlDbType.VarChar).Value = PswRequest.AddAmount3;
+            sqlCommand.Parameters.Add("@billingNumber", SqlDbType.VarChar).Value = PayRequest.billingNumber;
+            sqlCommand.Parameters.Add("@sourceAccount", SqlDbType.VarChar).Value = PswRequest.Data1;
+            sqlCommand.Parameters.Add("@name", SqlDbType.VarChar).Value = PswRequest.Data2;
+            sqlCommand.Parameters.Add("@billingCode", SqlDbType.VarChar).Value = PswRequest.Data3;
+            sqlCommand.Parameters.Add("@encodeData", SqlDbType.VarChar).Value = PayRequest.billingCode;
+            sqlCommand.Parameters.Add("@transactionDate", SqlDbType.VarChar).Value = PswRequest.Transdate;
+            sqlCommand.Parameters.Add("@transactionTime", SqlDbType.VarChar).Value = PswRequest.Transtime;
+            sqlCommand.Parameters.Add("@rc", SqlDbType.VarChar).Value = PayResponse.responseCode;
+            sqlCommand.Parameters.Add("@rcDesc", SqlDbType.VarChar).Value = PayResponse.responseDescription;
+            sqlCommand.Parameters.Add("@errmsg", SqlDbType.VarChar).Value = errorMsg;
+            sqlCommand.Parameters.Add("@jurnalSeq", SqlDbType.VarChar).Value = PayResponse.data.journalSeq;
+            sqlCommand.Parameters.Add("@ip", SqlDbType.VarChar).Value = ip;
+            sqlCommand.Parameters.Add("@nomorReff", SqlDbType.VarChar).Value = PayRequest.reference;
+            util.ExecuteSqlCommand(sqlCommand);
         }
 
         #region INQUIRY TELKOM
