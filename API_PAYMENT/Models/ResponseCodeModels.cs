@@ -73,21 +73,15 @@ namespace API_PAYMENT.Models
                 case "0205":
                     return "Total amount must not be empty";
                 case "0206":
-                    return "Name must not be empty";
-                case "0207":
                     return "Billing code must not be empty";
-                case "0208":
+                case "0207":
                     return "Total amount must be a number";
-                case "0209":
+                case "0208":
                     return "Total amount must not be a negative number";
-                case "0210":
+                case "0209":
                     return "Billing number must not be empty";
-                case "0211":
+                case "0210":
                     return "Source account has not been registered";
-                case "0212":
-                    return "Invalid input first bill/second bill/third bill format";
-                case "0213":
-                    return "Invalid input billing code format";
                 //Hanum, end response code TELKOM
 
                 //Hanum, start response code PSW
@@ -102,7 +96,7 @@ namespace API_PAYMENT.Models
                 case "0305":
                     return "Insufficient balance";
                 case "0306":
-                    return "Transaction timeout";
+                    return "Unprocess, please check your account statement";
                 case "0307":
                     return "Invoice not found";
                 case "0308":
