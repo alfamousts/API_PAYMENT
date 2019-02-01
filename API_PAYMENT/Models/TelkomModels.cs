@@ -93,7 +93,7 @@ namespace API_PAYMENT.Models
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string name { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public double totalAmount { get; set; }
+            public string totalAmount { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string billingCode { get; set; }
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -385,7 +385,8 @@ namespace API_PAYMENT.Models
                         billDetail.Add(listBillDetail);
                     }
                 }
-                AutoInqResponse.data.totalAmount = totalAmount;
+
+                AutoInqResponse.data.totalAmount = (totalAmount.ToString() == "0" ? null : totalAmount.ToString());
                 AutoInqResponse.data.billingDetail = billDetail;
             }
             else //fail
