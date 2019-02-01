@@ -54,7 +54,7 @@ namespace API_PAYMENT.Models
                 case "0104":
                     return "Card number must be a number";
                 case "0105":
-                    return "Total amount must be fillef";
+                    return "Total amount must be filled";
                 case "0106":
                     return "Card Name must be filled";
                 case "0108":
