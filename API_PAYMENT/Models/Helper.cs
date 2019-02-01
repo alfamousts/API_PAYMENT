@@ -20,10 +20,11 @@ namespace API_PAYMENT.Models
         public Boolean CheckIP(string ip, string kodeInst)
         {
             Boolean result;
-            string sql;
 
-            sql = "SELECT 1 FROM IPMAP with (nolock) WHERE IP_ADDRESS='" + ip + "' AND INSTITUTION_CODE = '" + kodeInst + "'";
-            DataTable dt = util.setDataTable(sql);
+            SqlCommand sqlCommand = new SqlCommand("SELECT 1 FROM IPMAP with (nolock) WHERE IP_ADDRESS = @IPaddress AND INSTITUTION_CODE = @institutionCode");
+            sqlCommand.Parameters.Add("@IPaddress", SqlDbType.VarChar).Value = ip;
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = kodeInst;
+            DataTable dt = util.setDataTable(sqlCommand);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -39,10 +40,9 @@ namespace API_PAYMENT.Models
 
         public DataTable GetParameterInstitusiDT(string kodeInst, string paramName)
         {
-            string sql;
-
-            sql = "SELECT " + paramName + " FROM INSTITUTION with (nolock) WHERE INSTITUTION_CODE = '" + kodeInst + "'";
-            DataTable dt = util.setDataTable(sql);
+            SqlCommand sqlCommand = new SqlCommand("SELECT " + paramName + " FROM INSTITUTION with (nolock) WHERE INSTITUTION_CODE = @institutionCode");
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = kodeInst;
+            DataTable dt = util.setDataTable(sqlCommand);
 
             return dt;
         }
@@ -50,10 +50,11 @@ namespace API_PAYMENT.Models
         public Boolean FeatureCheck(string institutionCode, string featureCode)
         {
             Boolean result;
-            string sql;
 
-            sql = "SELECT * FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE = '" + institutionCode + "' AND FEATURE_CODE = '" + featureCode + "'";
-            DataTable dt = util.setDataTable(sql);
+            SqlCommand sqlCommand = new SqlCommand("SELECT * FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE = @institutionCode AND FEATURE_CODE = @featureCode");
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = institutionCode;
+            sqlCommand.Parameters.Add("@featureCode", SqlDbType.VarChar).Value = featureCode;
+            DataTable dt = util.setDataTable(sqlCommand);
 
             if (dt!= null && dt.Rows.Count > 0)
             {
@@ -70,10 +71,11 @@ namespace API_PAYMENT.Models
         public string GetSourceAccount(string institutionCode, string featureCode)
         {
             string result;
-            string sql;
 
-            sql = "SELECT TOP(1) SOURCE_ACCOUNT FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE='" + institutionCode + "' AND FEATURE_CODE = '" + featureCode + "'";
-            DataTable dt = util.setDataTable(sql);
+            SqlCommand sqlCommand = new SqlCommand("SELECT TOP(1) SOURCE_ACCOUNT FROM FEATUREMAP WITH (NOLOCK) WHERE INSTITUTION_CODE = @institutionCode AND FEATURE_CODE = @featureCode");
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = institutionCode;
+            sqlCommand.Parameters.Add("@featureCode", SqlDbType.VarChar).Value = featureCode;
+            DataTable dt = util.setDataTable(sqlCommand);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -90,10 +92,19 @@ namespace API_PAYMENT.Models
         public void InsertActivityLog(string institutionCode, string institutionKey, string urlHit, string IP, string datetime, string method, string request)
         {
             string sql = "INSERT INTO ACTIVITYLOG ([INSTITUTION_CODE],[INSTITUTION_KEY],[URL_HIT],[IP],[DATETIME],[METHOD],[REQUEST]) " +
-                  "VALUES ('" + institutionCode + "', '" + institutionKey + "', '" + urlHit + "', " + "'" + IP + "', '" + datetime + "', '" 
-                  + method + "', '" + (request.Replace("\n","")).Replace("\t","").ToString() + "')";
+                  "VALUES (@institutionCode, @institutionKey, @urlHit, @IP, @datetime, @method, @request)";
 
-            util.cmdSQLScalar(sql);
+            SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.CommandType = CommandType.Text;
+            sqlCommand.CommandText = sql;
+            sqlCommand.Parameters.Add("@institutionCode", SqlDbType.VarChar).Value = institutionCode;
+            sqlCommand.Parameters.Add("@institutionKey", SqlDbType.VarChar).Value = institutionKey;
+            sqlCommand.Parameters.Add("@urlHit", SqlDbType.VarChar).Value = urlHit;
+            sqlCommand.Parameters.Add("@IP", SqlDbType.VarChar).Value = IP;
+            sqlCommand.Parameters.Add("@datetime", SqlDbType.VarChar).Value = datetime;
+            sqlCommand.Parameters.Add("@method", SqlDbType.VarChar).Value = method;
+            sqlCommand.Parameters.Add("@request", SqlDbType.VarChar).Value = (request.Replace("\n", "")).Replace("\t", "").ToString();
+            util.ExecuteSqlCommand(sqlCommand);
         }
 
         public string Base64Encode(string plainText)
