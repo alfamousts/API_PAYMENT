@@ -54,7 +54,7 @@ namespace API_PAYMENT.Models
                 case "0104":
                     return "Card number must be a number";
                 case "0105":
-                    return "Total amount must be fillef";
+                    return "Total amount must be filled";
                 case "0106":
                     return "Card Name must be filled";
                 case "0108":
@@ -64,7 +64,7 @@ namespace API_PAYMENT.Models
                 case "0110":
                     return "Card Number must be filled";
                 case "0111":
-                    return "Source account has not been registered";
+                    return "Source account has not been registered, please contact the administrator";
                 //Fikri, end response code TELKOM
 
                 //Hanum, start response code TELKOM

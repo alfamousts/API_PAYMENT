@@ -155,7 +155,25 @@ namespace API_PAYMENT.Models
             return x;
         }
 
-        
+        public int ExecuteSqlCommand(SqlCommand sqlCommand)
+        {
+            Helper helper = new Helper();
+            int affectedRow = 0;
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BRI_APIPAYMENTConnectionString"].ConnectionString))
+            {
+                conn.Open();
+                try
+                {
+                    sqlCommand.Connection = conn;
+                    affectedRow = sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    helper.logging("", "APIPAYMENTERROR", ex.ToString());
+                }
+            }
+            return affectedRow;
+        }
 
         public int Exec_SP(SqlCommand sqlCommand, ref string ErrorMsg)
         {
