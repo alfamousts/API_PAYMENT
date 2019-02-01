@@ -128,19 +128,8 @@ namespace API_PAYMENT.Models
             [StringLength(20)]
             public string totalAmount { get; set; }
             [Required]
-            [StringLength(20)]
-            public string firstBill { get; set; } 
-            [Required]
-            [StringLength(20)]
-            public string secondBill { get; set; } 
-            [Required]
-            [StringLength(20)]
-            public string thirdBill { get; set; } 
-            [Required]
             [StringLength(100)]
             public string billingNumber { get; set; } //InputData
-            [StringLength(100)]
-            public string name { get; set; } //Data2
             [Required]
             [StringLength(100)]
             public string billingCode { get; set; }
@@ -238,12 +227,12 @@ namespace API_PAYMENT.Models
             }
 
             sql = "INSERT INTO TELKOMTRANSACTION ([CREATEDTIME],[WS_STARTTIME],[WS_ENDTIME],[INSTITUTION_CODE],[SEQUENCE_TRX],[TOTAL_AMOUNT],[FIRST_BILL]" +
-                ",[SECOND_BILL],[THIRD_BILL],[BILLING_NUMBER],[SOURCE_ACCOUNT],[NAME],[BILLING_CODE],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC]" +
+                ",[SECOND_BILL],[THIRD_BILL],[BILLING_NUMBER],[SOURCE_ACCOUNT],[NAME],[BILLING_CODE],[ENCODE_DATA],[TRANSACTION_DATE],[TRANSACTION_TIME],[RC],[RC_DESC]" +
                 ",[ERRMSG],[JURNALSEQ],[IP_ADDRESS],[NOMOR_REFF]) " +
                   "VALUES ('" + DateTime.Now.ToString(ConstantModels.FORMATDATETIME) + "','" + wsStartTime + "', '" + wsEndTime + "', '" + PayRequest.institutionCode + 
-                  "', '" + PswRequest.SequenceTrx + "', '" + PayRequest.totalAmount + "', '" + PayRequest.firstBill + "','" + PayRequest.secondBill + 
-                  "', '" + PayRequest.thirdBill + "', '" + PayRequest.billingNumber + "','" + PswRequest.Data1 + "', '" + PayRequest.name + 
-                  "', '" + PayRequest.billingCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PayResponse.responseCode + 
+                  "', '" + PswRequest.SequenceTrx + "', '" + PayRequest.totalAmount + "', '" + PswRequest.AddAmount1 + "','" + PswRequest.AddAmount2 + 
+                  "', '" + PswRequest.AddAmount3 + "', '" + PayRequest.billingNumber + "','" + PswRequest.Data1 + "', '" + PswRequest.Data2 + 
+                  "', '" + PswRequest.Data3 + "', '" + PayRequest.billingCode + "', '" + PswRequest.Transdate + "', '" + PswRequest.Transtime + "', '" + PayResponse.responseCode + 
                   "', '" + PayResponse.responseDescription + "', '" + errorMsg + "','" + PayResponse.data.journalSeq + "', '" + ip + "', '" + PayRequest.reference + "')";
 
             util.cmdSQLScalar(sql);
@@ -296,9 +285,6 @@ namespace API_PAYMENT.Models
             request.ContentLength = postBytes.Length;
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            //WebProxy proxy = new WebProxy("172.18.104.20", 1707);
-            //request.Proxy = proxy;
-
             // add post data to request
             Stream postStream = request.GetRequestStream();
             postStream.Write(postBytes, 0, postBytes.Length);
@@ -317,11 +303,15 @@ namespace API_PAYMENT.Models
                 }
                 else
                 {
-                    return null;
+                    TelkomModels.PSWServiceInquiryResponse respond = new TelkomModels.PSWServiceInquiryResponse();
+                    respond.RC = ConstantModels.TIMEOUTCODEINQ;
+                    return respond;
                 }
             }catch(Exception ex)
             {
-                return null;
+                TelkomModels.PSWServiceInquiryResponse respond = new TelkomModels.PSWServiceInquiryResponse();
+                respond.RC = ConstantModels.EXCEPTIONCODEINQ;
+                return respond;
             }
         }
 
@@ -358,7 +348,7 @@ namespace API_PAYMENT.Models
                 AutoInqResponse.responseCode = ConstantModels.SUCCESSCODEINQ;
                 AutoInqResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEINQ);
                 AutoInqResponse.data.name = splitData1[0].ToString();
-                AutoInqResponse.data.billingCode = GetInqResponse.Data2;
+                AutoInqResponse.data.billingCode = helper.Base64Encode(GetInqResponse.Data1 + "~" + GetInqResponse.Data2);
 
                 for (int i = 1; i <= countData1; i++)
                 {
@@ -384,8 +374,6 @@ namespace API_PAYMENT.Models
             }
 
             string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
-            string response = "RESPONSE : ResponseCode=" + AutoInqResponse.responseCode + "|ResponseDescription=" + AutoInqResponse.responseDescription;
-            helper.logging(AutoInqRequest.institutionCode, "APIPAYMENT_INQUIRYTELKOM", response);
             telkomHelper.InsertLogInquiryTelkom(AutoInqRequest, PswRequest, AutoInqResponse, wsStartTime, wsEndTime, ip, GetInqResponse.RC);
 
             return AutoInqResponse;
@@ -419,9 +407,6 @@ namespace API_PAYMENT.Models
             request.ContentLength = postBytes.Length;
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            //WebProxy proxy = new WebProxy("172.18.104.20", 1707);
-            //request.Proxy = proxy;
-
             // add post data to request
             Stream postStream = request.GetRequestStream();
             postStream.Write(postBytes, 0, postBytes.Length);
@@ -440,35 +425,42 @@ namespace API_PAYMENT.Models
                 }
                 else
                 {
-                    return null;
+                    TelkomModels.PSWServicePaymentResponse respond = new TelkomModels.PSWServicePaymentResponse();
+                    respond.RC = ConstantModels.TIMEOUTCODEPAY;
+                    return respond;
                 }
             }catch(Exception ex)
             {
-                return null;
+                TelkomModels.PSWServicePaymentResponse respond = new TelkomModels.PSWServicePaymentResponse();
+                respond.RC = ConstantModels.EXCEPTIONCODEPAY;
+                return respond;
             }
         }
 
-        //added by Hanum 4-9-2018
         public TelkomModels.TelkomPaymentResponse PaymentTelkom(ref TelkomModels.TelkomPaymentRequest AutoPayRequest, string ip)
         {
-            string wsStartTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME); //Hanum new
+            string wsStartTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
 
             TelkomHelper telkomHelper = new TelkomHelper();
             TelkomModels.PSWServiceRequest PswRequest = new TelkomModels.PSWServiceRequest();
             TelkomModels.TelkomPaymentResponse AutoPayResponse = new TelkomModels.TelkomPaymentResponse();
             TelkomModels.PSWServicePaymentResponse GetPayResponse = new TelkomModels.PSWServicePaymentResponse();
 
+            string decodeBillingCode = helper.Base64Decode(AutoPayRequest.billingCode);
+            string[] splitBillingCode = decodeBillingCode.Split('~');
+            string[] splitData1PSW = ((splitBillingCode[0]).Replace("||", "~")).Split('~');
+
             Random random = new Random();
             PswRequest.SubProduct = ConstantModels.SubProductPAY_Telkom;
             PswRequest.SequenceTrx = DateTime.Now.ToString("HHmmssfff") + random.Next(0, 9).ToString();
             PswRequest.TotalAmount = AutoPayRequest.totalAmount;
-            PswRequest.AddAmount1 = AutoPayRequest.firstBill;
-            PswRequest.AddAmount2 = AutoPayRequest.secondBill;
-            PswRequest.AddAmount3 = AutoPayRequest.thirdBill;
+            PswRequest.AddAmount1 = splitData1PSW[1];
+            PswRequest.AddAmount2 = splitData1PSW[2];
+            PswRequest.AddAmount3 = splitData1PSW[3];
             PswRequest.InputData = AutoPayRequest.billingNumber;
             PswRequest.Data1 = telkomHelper.GetSourceAccountTelkom(AutoPayRequest.institutionCode, ConstantModels.FeatureCode_Telkom);;
-            PswRequest.Data2 = AutoPayRequest.name;
-            PswRequest.Data3 = AutoPayRequest.billingCode;
+            PswRequest.Data2 = splitData1PSW[0];
+            PswRequest.Data3 = splitBillingCode[1];
 
             GetPayResponse = PSWServicePaymentTelkom(ref PswRequest);
             string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
@@ -495,10 +487,6 @@ namespace API_PAYMENT.Models
 
             //insert ke tabel TELKOMTRANSACTION
             telkomHelper.InsertTelkomTransaction(AutoPayRequest, PswRequest, AutoPayResponse, wsStartTime, wsEndTime, ip, GetPayResponse.RC);
-
-            string response = "RESPONSE : ResponseCode=" + AutoPayResponse.responseCode + "-" + GetPayResponse.RC + "|ResponseDescription=" + AutoPayResponse.responseDescription;
-            helper.logging(AutoPayRequest.institutionCode, "APIPAYMENT_PAYMENTTELKOM", response);
-
             return AutoPayResponse;
         }
         #endregion
