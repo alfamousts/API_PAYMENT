@@ -328,8 +328,7 @@ namespace API_PAYMENT.Models
                     respond.RC = ConstantModels.TIMEOUTCODEINQ;
                     return respond;
                 }
-            }
-            catch (Exception ex)
+            }catch(Exception ex)
             {
                 TelkomModels.PSWServiceInquiryResponse respond = new TelkomModels.PSWServiceInquiryResponse();
                 respond.RC = ConstantModels.EXCEPTIONCODEINQ;
@@ -462,8 +461,7 @@ namespace API_PAYMENT.Models
                     respond.RC = ConstantModels.TIMEOUTCODEPAY;
                     return respond;
                 }
-            }
-            catch (Exception ex)
+            }catch(Exception ex)
             {
                 TelkomModels.PSWServicePaymentResponse respond = new TelkomModels.PSWServicePaymentResponse();
                 respond.RC = ConstantModels.EXCEPTIONCODEPAY;
