@@ -36,7 +36,7 @@ namespace API_PAYMENT.Models
             [StringLength(20)]
             public string SubProduct { get; set; }
             [StringLength(20)]
-            public string SequenceTrx{ get; set; }
+            public string SequenceTrx { get; set; }
             [Required]
             [StringLength(20)]
             public string TotalAmount { get; set; } = "";
@@ -375,12 +375,12 @@ namespace API_PAYMENT.Models
                 {
                     string[] splitBillDetail = splitData1[i].Split('#');
                     totalAmount += Convert.ToDouble(String.IsNullOrEmpty(splitBillDetail[1].ToString()) ? "0" : splitBillDetail[1].ToString());
-                                        
+
                     TelkomModels.TelkomBillingDetailsData listBillDetail = new TelkomModels.TelkomBillingDetailsData();
 
                     if (!String.IsNullOrEmpty(splitBillDetail[0].ToString()) || !String.IsNullOrEmpty(splitBillDetail[1].ToString()))
                     {
-                        listBillDetail.referenceNumber =  splitBillDetail[0].ToString();
+                        listBillDetail.referenceNumber = splitBillDetail[0].ToString();
                         listBillDetail.amount = splitBillDetail[1].ToString();
                         billDetail.Add(listBillDetail);
                     }
@@ -389,6 +389,16 @@ namespace API_PAYMENT.Models
                 AutoInqResponse.data.totalAmount = (totalAmount.ToString() == "0" ? null : totalAmount.ToString());
                 AutoInqResponse.data.billingDetail = billDetail;
             }
+            else if (GetInqResponse.RC == ConstantModels.TIMEOUTCODEINQ)
+            {
+                AutoInqResponse.responseCode = ConstantModels.TIMEOUTCODEINQ;
+                AutoInqResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetInqResponse.RC);
+            }
+            else if (GetInqResponse.RC == ConstantModels.EXCEPTIONCODEINQ)
+            {
+                AutoInqResponse.responseCode = ConstantModels.EXCEPTIONCODEINQ;
+                AutoInqResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetInqResponse.RC);
+            }
             else //fail
             {
                 AutoInqResponse.responseCode = ResponseCodeModels.GetResponseCodePSW(GetInqResponse.RC);
@@ -396,7 +406,7 @@ namespace API_PAYMENT.Models
             }
 
             string wsEndTime = DateTime.Now.ToString(ConstantModels.FORMATDATETIME);
-            telkomHelper.InsertLogInquiryTelkom(AutoInqRequest, PswRequest, AutoInqResponse, wsStartTime, wsEndTime, ip, GetInqResponse.RC);
+            telkomHelper.InsertLogInquiryTelkom(AutoInqRequest, PswRequest, AutoInqResponse, wsStartTime, wsEndTime, ip, (GetInqResponse == null ? "" : GetInqResponse.RC));
 
             return AutoInqResponse;
         }
@@ -501,14 +511,23 @@ namespace API_PAYMENT.Models
                     AutoPayResponse.responseCode = ConstantModels.TIMEOUTCODEPAY;
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.TIMEOUTCODEPAY);
                 }
-
-                if (GetPayResponse.RC == "00") //success
+                else if (GetPayResponse.RC == "00") //success
                 {
                     AutoPayResponse.responseCode = ConstantModels.SUCCESSCODEPAY;
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(ConstantModels.SUCCESSCODEPAY);
                     AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
                     AutoPayResponse.data.reference = AutoPayRequest.reference;
                     AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
+                }
+                else if (GetPayResponse.RC == ConstantModels.TIMEOUTCODEPAY)
+                {
+                    AutoPayResponse.responseCode = ConstantModels.TIMEOUTCODEPAY;
+                    AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetPayResponse.RC);
+                }
+                else if (GetPayResponse.RC == ConstantModels.EXCEPTIONCODEPAY)
+                {
+                    AutoPayResponse.responseCode = ConstantModels.EXCEPTIONCODEPAY;
+                    AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetPayResponse.RC);
                 }
                 else //fail
                 {
@@ -518,7 +537,7 @@ namespace API_PAYMENT.Models
             }
 
             //insert ke tabel TELKOMTRANSACTION
-            telkomHelper.InsertTelkomTransaction(AutoPayRequest, PswRequest, AutoPayResponse, wsStartTime, wsEndTime, ip, GetPayResponse.RC);
+            telkomHelper.InsertTelkomTransaction(AutoPayRequest, PswRequest, AutoPayResponse, wsStartTime, wsEndTime, ip, (GetPayResponse == null ? "" : GetPayResponse.RC));
             return AutoPayResponse;
         }
         #endregion
