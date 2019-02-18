@@ -112,9 +112,13 @@ namespace API_PAYMENT.Models
                 case "0312":
                     return "Invalid credit card number";
                 case "0313":
-                    return "BNI credit card is not registered";
+                    return "BIN credit card is not registered";
                 case "0314":
                     return "Invalid credit card format";
+                case "0315":
+                    return "Transaction On Process";
+                case "0316":
+                    return "Credit Card Not Found";
                 //Hanum, end response code PSW
 
                 default:
@@ -162,6 +166,10 @@ namespace API_PAYMENT.Models
                     return "0311"; //Cardlink end of day
                 case "N2":
                     return "0312"; //Invalid credit card number
+                case "82":
+                    return "0315"; //Invalid credit card number
+                case "14":
+                    return "0316"; //Invalid credit card number
                 //CC Bank Lain
                 case "06":
                     return "0313"; //BNI credit card is not registered
