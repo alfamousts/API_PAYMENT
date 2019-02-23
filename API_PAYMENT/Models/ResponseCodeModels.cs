@@ -122,7 +122,7 @@ namespace API_PAYMENT.Models
                 //Hanum, end response code PSW
 
                 default:
-                    return "";
+                    return "There was an error";
             }
         }
 
@@ -144,9 +144,9 @@ namespace API_PAYMENT.Models
                 case "51":
                     return "0305"; //Saldo Tidak Cukup
                 case "Q4":
-                    return "0306"; //Transaksi Timeout (PSW)
+                    return "0315"; //Transaksi Timeout (PSW)
                 case "68":
-                    return "0306"; //Transaksi Timeout (3rd Party)
+                    return "0315"; //Transaksi Timeout (3rd Party)
                 //Hanum, start abnormal case Telkom
                 case "88":
                     return "0307"; //Data Not Found
@@ -178,7 +178,7 @@ namespace API_PAYMENT.Models
                 //Fikri, end
 
                 default:
-                    return "";
+                    return "There was an error";
             }
         }
         //Hanum, end response code dari PSW
