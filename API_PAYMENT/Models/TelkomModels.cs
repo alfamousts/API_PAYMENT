@@ -519,12 +519,12 @@ namespace API_PAYMENT.Models
                     AutoPayResponse.data.reference = AutoPayRequest.reference;
                     AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
                 }
-                else if (GetPayResponse.RC == ConstantModels.TIMEOUTCODEPAY)
+                else if (GetPayResponse.RC == ConstantModels.TIMEOUTCODEPAY) //timeout
                 {
                     AutoPayResponse.responseCode = ConstantModels.TIMEOUTCODEPAY;
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetPayResponse.RC);
                 }
-                else if (GetPayResponse.RC == ConstantModels.EXCEPTIONCODEPAY)
+                else if (GetPayResponse.RC == ConstantModels.EXCEPTIONCODEPAY) //exception
                 {
                     AutoPayResponse.responseCode = ConstantModels.EXCEPTIONCODEPAY;
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(GetPayResponse.RC);
@@ -533,6 +533,14 @@ namespace API_PAYMENT.Models
                 {
                     AutoPayResponse.responseCode = ResponseCodeModels.GetResponseCodePSW(GetPayResponse.RC);
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
+
+                    //kondisi suspend kredit dari psw
+                    if (GetPayResponse.RC == "Q4" || GetPayResponse.RC == "68" || GetPayResponse.RC == "82")
+                    {
+                        AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
+                        AutoPayResponse.data.reference = AutoPayRequest.reference;
+                        AutoPayResponse.data.journalSeq = GetPayResponse.JurnalSeq.Trim();
+                    }
                 }
             }
 
