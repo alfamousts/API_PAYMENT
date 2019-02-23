@@ -116,7 +116,7 @@ namespace API_PAYMENT.Models
                 case "0314":
                     return "Invalid credit card format";
                 case "0315":
-                    return "Transaction On Process";
+                    return "Transaction On Process"; //suspend kredit
                 case "0316":
                     return "Credit Card Not Found";
                 //Hanum, end response code PSW
@@ -144,9 +144,9 @@ namespace API_PAYMENT.Models
                 case "51":
                     return "0305"; //Saldo Tidak Cukup
                 case "Q4":
-                    return "0315"; //Transaksi Timeout (PSW)
+                    return "0315"; //Transaksi Timeout (PSW) -> suspend kredit
                 case "68":
-                    return "0315"; //Transaksi Timeout (3rd Party)
+                    return "0315"; //Transaksi Timeout (3rd Party) -> suspend kredit
                 //Hanum, start abnormal case Telkom
                 case "88":
                     return "0307"; //Data Not Found
@@ -167,7 +167,7 @@ namespace API_PAYMENT.Models
                 case "N2":
                     return "0312"; //Invalid credit card number
                 case "82":
-                    return "0315"; //Invalid credit card number
+                    return "0315"; //Invalid credit card number -> suspend kredit
                 case "14":
                     return "0316"; //Invalid credit card number
                 //CC Bank Lain

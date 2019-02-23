@@ -534,7 +534,7 @@ namespace API_PAYMENT.Models
                     AutoPayResponse.responseCode = ResponseCodeModels.GetResponseCodePSW(GetPayResponse.RC);
                     AutoPayResponse.responseDescription = ResponseCodeModels.GetResponseDescription(AutoPayResponse.responseCode);
 
-                    //kondisi suspend kredit
+                    //kondisi suspend kredit dari psw
                     if (GetPayResponse.RC == "Q4" || GetPayResponse.RC == "68" || GetPayResponse.RC == "82")
                     {
                         AutoPayResponse.data.billingNumber = AutoPayRequest.billingNumber;
