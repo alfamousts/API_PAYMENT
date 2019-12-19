@@ -10,7 +10,7 @@ using System.Text;
 
 namespace API_PAYMENT.Models
 {
-    /// <summary>
+    /// <summary> 
     ///  Telkom Model Data, Hanum
     /// </summary>
     public class TelkomModels
@@ -306,13 +306,14 @@ namespace API_PAYMENT.Models
             request.ContentLength = postBytes.Length;
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            // add post data to request
-            Stream postStream = request.GetRequestStream();
-            postStream.Write(postBytes, 0, postBytes.Length);
-            postStream.Flush();
-            postStream.Close();
             try
             {
+                // add post data to request
+                Stream postStream = request.GetRequestStream();
+                postStream.Write(postBytes, 0, postBytes.Length);
+                postStream.Flush();
+                postStream.Close();
+            
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

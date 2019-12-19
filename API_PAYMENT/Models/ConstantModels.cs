@@ -14,7 +14,8 @@ namespace API_PAYMENT.Models
         }
 
         //FIKRI, start API_PAYMENT CCBRI
-        public const string URLINQPAY = "http://10.107.11.108/poscgi/pswcgi/method=post&data=json";
+        public const string URLINQPAY = "http://10.35.65.197/poscgi/pswcgi/method=post&data=json";
+        //"http://10.107.11.108/poscgi/pswcgi/method=post&data=json";
 
         public const string ChannelID_CCBRI = "APIBILL";
         public const string ProductID_CCBRI = "CCBRI";
@@ -42,7 +43,8 @@ namespace API_PAYMENT.Models
         public const string FORMATTIME = "HHmmss";
 
         //Hanum, start API_PAYMENT Telkom
-        public const string URLINQPAY_TELKOM = "http://10.107.11.108/poscgi/pswcgi/method=post&data=json/";
+        public const string URLINQPAY_TELKOM = "http://10.35.65.197/poscgi/pswcgi/method=post&data=json"; 
+            //"http://10.107.11.108/poscgi/pswcgi/method=post&data=json/";
 
         public const string ChannelID_Telkom = "APIBILL";
         public const string ProductID_Telkom = "TELKOM";

@@ -72,6 +72,10 @@ namespace API_PAYMENT.Models
                     {
                         rc = "0012"; //Reference tidak boleh kosong
                     }
+                    else if (!decimal.TryParse(PayRequest.billingNumber.Replace(",", ""), out number))
+                    {
+                        rc = "0204"; //Billing number mengandung karakter bukan angka
+                    }
                     else if (!decimal.TryParse(PayRequest.totalAmount.Replace(",", ""), out number))
                     {
                         rc = "0207"; //Total amount mengandung karakter bukan angka
